@@ -1,0 +1,608 @@
+<!DOCTYPE html>
+<!--[if lt IE 7]>      <html class="no-js lt-ie9 lt-ie8 lt-ie7" lang="en-US" prefix="og: http://ogp.me/ns#"> <![endif]-->
+<!--[if IE 7]>         <html class="no-js lt-ie9 lt-ie8" lang="en-US" prefix="og: http://ogp.me/ns#"> <![endif]-->
+<!--[if IE 8]>         <html class="no-js lt-ie9" lang="en-US" prefix="og: http://ogp.me/ns#"> <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en-US" prefix="og: http://ogp.me/ns#"> <!--<![endif]-->
+<head>
+<base href="http://quanteco.github.io." />
+
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <title>Moran&#039;s Eigenvector Maps -</title>
+
+<!-- This site is optimized with the Yoast SEO plugin v3.0.7 - https://yoast.com/wordpress/plugins/seo/ -->
+<link rel="canonical" href="http://quanteco.github.io./2016/01/04/morans-eigenvector-maps/" />
+<meta property="og:locale" content="en_US" />
+<meta property="og:type" content="article" />
+<meta property="og:title" content="Moran&#039;s Eigenvector Maps -" />
+<meta property="og:description" content="In conjunction with my blog posts on Moran&#8217;s I and developing distance based weight matrices, for this blog post, I will be continuing my topic of Moran&#8217;s Eigenvector Maps. The final part of the process is a function to perform &hellip; Continued" />
+<meta property="og:url" content="http://quanteco.github.io./2016/01/04/morans-eigenvector-maps/" />
+<meta property="article:tag" content="autocorrelation" />
+<meta property="article:tag" content="dbmem" />
+<meta property="article:tag" content="mem" />
+<meta property="article:tag" content="spatial" />
+<meta property="article:section" content="R" />
+<meta property="article:published_time" content="2016-01-04T12:00:13+00:00" />
+<meta property="article:modified_time" content="2016-04-01T21:24:08+00:00" />
+<meta property="og:updated_time" content="2016-04-01T21:24:08+00:00" />
+<meta property="og:image" content="http://quanteco.github.io./wp-content/uploads/2015/01/autopatterns.png" />
+<meta name="twitter:card" content="summary"/>
+<meta name="twitter:description" content="In conjunction with my blog posts on Moran&#8217;s I and developing distance based weight matrices, for this blog post, I will be continuing my topic of Moran&#8217;s Eigenvector Maps. The final part of the process is a function to perform &hellip; Continued"/>
+<meta name="twitter:title" content="Moran&#039;s Eigenvector Maps -"/>
+<meta name="twitter:image" content="http://i1.wp.com/gregorybanderson.elementfx.com/wp-content/uploads/2015/01/autopatterns.png?fit=600%2C300"/>
+<!-- / Yoast SEO plugin. -->
+
+
+
+
+		<script type="text/javascript">
+			window._wpemojiSettings = {"baseUrl":"https:\/\/s.w.org\/images\/core\/emoji\/72x72\/","ext":".png","source":{"concatemoji":"http:\/\/gregorybanderson.elementfx.com\/wp-includes\/js\/wp-emoji-release.min.js?ver=4.4.2"}};
+			!function(a,b,c){function d(a){var c,d=b.createElement("canvas"),e=d.getContext&&d.getContext("2d"),f=String.fromCharCode;return e&&e.fillText?(e.textBaseline="top",e.font="600 32px Arial","flag"===a?(e.fillText(f(55356,56806,55356,56826),0,0),d.toDataURL().length>3e3):"diversity"===a?(e.fillText(f(55356,57221),0,0),c=e.getImageData(16,16,1,1).data.toString(),e.fillText(f(55356,57221,55356,57343),0,0),c!==e.getImageData(16,16,1,1).data.toString()):("simple"===a?e.fillText(f(55357,56835),0,0):e.fillText(f(55356,57135),0,0),0!==e.getImageData(16,16,1,1).data[0])):!1}function e(a){var c=b.createElement("script");c.src=a,c.type="text/javascript",b.getElementsByTagName("head")[0].appendChild(c)}var f,g;c.supports={simple:d("simple"),flag:d("flag"),unicode8:d("unicode8"),diversity:d("diversity")},c.DOMReady=!1,c.readyCallback=function(){c.DOMReady=!0},c.supports.simple&&c.supports.flag&&c.supports.unicode8&&c.supports.diversity||(g=function(){c.readyCallback()},b.addEventListener?(b.addEventListener("DOMContentLoaded",g,!1),a.addEventListener("load",g,!1)):(a.attachEvent("onload",g),b.attachEvent("onreadystatechange",function(){"complete"===b.readyState&&c.readyCallback()})),f=c.source||{},f.concatemoji?e(f.concatemoji):f.wpemoji&&f.twemoji&&(e(f.twemoji),e(f.wpemoji)))}(window,document,window._wpemojiSettings);
+		</script>
+		<style type="text/css">
+img.wp-smiley,
+img.emoji {
+	display: inline !important;
+	border: none !important;
+	box-shadow: none !important;
+	height: 1em !important;
+	width: 1em !important;
+	margin: 0 .07em !important;
+	vertical-align: -0.1em !important;
+	background: none !important;
+	padding: 0 !important;
+}
+</style>
+<link rel='stylesheet' id='rb-font-awesome-css'  href='//maxcdn.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.min.css?ver=4.4.0' type='text/css' media='all' />
+<link rel='stylesheet' id='rb-styles-css'  href='http://quanteco.github.io./wp-content/plugins/resume-builder/css/resume-builder-styles.css?ver=4.4.2' type='text/css' media='all' />
+<link rel='stylesheet' id='easy_table_style-css'  href='http://quanteco.github.io./wp-content/plugins/easy-table/themes/default/style.css?ver=1.5.3' type='text/css' media='all' />
+<link rel='stylesheet' id='wp-github-css'  href='http://quanteco.github.io./wp-content/plugins/wp-github/css/wp-github.css?ver=4.4.2' type='text/css' media='all' />
+<link rel='stylesheet' id='kadence_theme-css'  href='http://quanteco.github.io./wp-content/themes/virtue/assets/css/virtue.css?ver=262' type='text/css' media='all' />
+<link rel='stylesheet' id='virtue_skin-css'  href='http://quanteco.github.io./wp-content/themes/virtue/assets/css/skins/default.css' type='text/css' media='all' />
+<link rel='stylesheet' id='redux-google-fonts-virtue-css'  href='http://fonts.googleapis.com/css?family=Lato%3A400&#038;ver=1452092672' type='text/css' media='all' />
+<link rel='stylesheet' id='genericons-css'  href='http://quanteco.github.io./wp-content/plugins/jetpack/_inc/genericons/genericons/genericons.css?ver=3.1' type='text/css' media='all' />
+<link rel='stylesheet' id='jetpack_css-css'  href='http://quanteco.github.io./wp-content/plugins/jetpack/css/jetpack.css?ver=3.8.2' type='text/css' media='all' />
+<script type='text/javascript' src='http://quanteco.github.io./wp-includes/js/jquery/jquery.js?ver=1.11.3'></script>
+<script type='text/javascript' src='http://quanteco.github.io./wp-includes/js/jquery/jquery-migrate.min.js?ver=1.2.1'></script>
+<script type='text/javascript' src='http://quanteco.github.io./wp-content/plugins/jetpack/modules/related-posts/related-posts.js?ver=20150408'></script>
+<script type='text/javascript' src='http://quanteco.github.io./wp-content/plugins/file-away/lib/js/alphanum.js?ver=1.0'></script>
+<script type='text/javascript' src='http://quanteco.github.io./wp-content/plugins/file-away/lib/js/chosen/chosen.js?ver=1.1.0'></script>
+<script type='text/javascript' src='http://quanteco.github.io./wp-content/plugins/file-away/lib/js/context/contextmenu.js?ver=3.9.6.1'></script>
+<script type='text/javascript' src='http://quanteco.github.io./wp-content/plugins/file-away/lib/js/footable.js?ver=2.0.1.2'></script>
+<script type='text/javascript' src='http://quanteco.github.io./wp-content/plugins/file-away/lib/js/filertify.js?ver=0.3.11'></script>
+<script type='text/javascript' src='http://quanteco.github.io./wp-content/plugins/file-away/lib/js/soundmanager2.js?ver=2.97a.20130101'></script>
+<script type='text/javascript'>
+/* <![CDATA[ */
+var fileaway_mgmt = {"ajaxurl":"http:\/\/gregorybanderson.elementfx.com\/wp-admin\/admin-ajax.php","nonce":"a3724cfb43","device":"desktop","no_results":"Nothing found.","cancel_link":"Cancel","save_link":"Save","proceed_link":"Proceed","delete_check":"Delete?","ok_label":"OK","confirm_label":"I'm Sure","cancel_label":"Nevermind","file_singular":"file","file_plural":"files","delete_confirm":"You are about to permanently delete numfiles. Are you sure you're OK with that?","tamper1":"Sorry, there was a problem verifying the correct path to the files.","tamper2":"There was an error completing your request. The path to the directory has not been properly defined.","tamper3":"Sorry, but the name you specified cannot be processed.","tamper4":"An error has been triggered.","no_files_selected":"No files have been selected. Click on the table rows of the files you wish to select.","no_files_chosen":"No files have been chosen.","no_action":"No action has been selected.","no_destination":"No destination directory has been selected.","no_subdir_name":"You did not specify a name for your sub-directory.","unreadable_file":"Sorry, a file you have specified could not be read.","build_path":"Please build the path to your destination directory.","no_upload_support":"Your browser does not support the File Upload API. Please update.","exceeds_size":"This file exceeds the prettymax max file size.","type_not_permitted":"This file type is not permitted.","view_all_permitted":"View all permitted file types.","view_all_prohibited":"View all prohibited file types.","double_dots_override":"You may not use double dots or attempt to override the upload directory.","double_dots":"You may not use double dots in the filename.","creation_disabled":"Sub-directory creation is disabled.","no_override":"You may not attempt to override the upload directory.","multi_type":"You may not specify a script filetype prior to a non-script filetype.","upload_failure":"Sorry about that, but filename could not be uploaded.","rename_column":"Rename Column","delete_column":"Delete Column","insert_col_before":"Insert New Column Before","insert_col_after":"Insert New Column After","insert_row":"Insert New Row","delete_row":"Delete Row","save_backup":"Save Backup","new_column_name":"New Column Name","atleast_one_column":"There must be at least one column at all times.","atleast_one_row":"There must be at least one row at all times.","next_label":"Next","create_label":"Create","new_file_name":"New File Name","specify_file_name":"You must specify a file name.","specify_column_name":"You must specify at least one column name.","column_names":"Column Names, Comma-separated"};
+/* ]]> */
+</script>
+<script type='text/javascript' src='http://quanteco.github.io./wp-content/plugins/file-away/lib/js/management.js?ver=3.9.6.1'></script>
+<script type='text/javascript'>
+/* <![CDATA[ */
+var fileaway_stats = {"ajaxurl":"http:\/\/gregorybanderson.elementfx.com\/wp-admin\/admin-ajax.php","nonce":"df9230aaac"};
+/* ]]> */
+</script>
+<script type='text/javascript' src='http://quanteco.github.io./wp-content/plugins/file-away/lib/js/stats.js?ver=3.9.6.1'></script>
+<script type='text/javascript' src='http://quanteco.github.io./wp-content/themes/virtue/assets/js/vendor/modernizr.min.js'></script>
+<link rel='https://api.w.org/' href='http://quanteco.github.io./wp-json/' />
+
+ 
+
+<link rel='shortlink' href='http://wp.me/p765Dr-3H' />
+
+
+<script> var fileaway_filetype_groups = {'adobe' : ['abf', 'aep', 'afm', 'ai', 'as', 'eps', 'fla', 'flv', 'fm', 'indd', 'pdd', 'pdf', 'pmd', 'ppj', 'prc', 'ps', 'psb', 'psd', 'swf'], 'application' : ['bat', 'dll', 'exe', 'msi'], 'audio' : ['aac', 'aif', 'aifc', 'aiff', 'amr', 'ape', 'au', 'bwf', 'flac', 'iff', 'gsm', 'la', 'm4a', 'm4b', 'm4p', 'mid', 'mp2', 'mp3', 'mpc', 'ogg', 'ots', 'ram', 'raw', 'rex', 'rx2', 'spx', 'swa', 'tta', 'vox', 'wav', 'wma', 'wv'], 'compression' : ['7z', 'a', 'ace', 'afa', 'ar', 'bz2', 'cab', 'cfs', 'cpio', 'cpt', 'dar', 'dd', 'dmg', 'gz', 'lz', 'lzma', 'lzo', 'mar', 'rar', 'rz', 's7z', 'sda', 'sfark', 'shar', 'tar', 'tgz', 'xz', 'z', 'zip', 'zipx', 'zz'], 'css' : ['css', 'less', 'sass', 'scss'], 'image' : ['bmp', 'dds', 'exif', 'gif', 'hdp', 'hdr', 'iff', 'jfif', 'jpeg', 'jpg', 'jxr', 'pam', 'pbm', 'pfm', 'pgm', 'png', 'pnm', 'ppm', 'raw', 'rgbe', 'tga', 'thm', 'tif', 'tiff', 'webp', 'wdp', 'yuv'], 'msdoc' : ['doc', 'docm', 'docx', 'dot', 'dotx'], 'msexcel' : ['xls', 'xlsm', 'xlsb', 'xlsx', 'xlt', 'xltm', 'xltx', 'xlw'], 'openoffice' : ['dbf', 'dbf4', 'odp', 'ods', 'odt', 'stc', 'sti', 'stw', 'sxc', 'sxi', 'sxw'], 'powerpoint' : ['pot', 'potm', 'potx', 'pps', 'ppt', 'pptm', 'pptx', 'pub'], 'script' : ['asp', 'cfm', 'cgi', 'clas', 'class', 'cpp', 'htm', 'html', 'java', 'js', 'php', 'pl', 'py', 'rb', 'shtm', 'shtml', 'xhtm', 'xhtml', 'xml', 'yml'], 'text' : ['123', 'csv', 'log', 'psw', 'rtf', 'sql', 'txt', 'uof', 'uot', 'wk1', 'wks', 'wpd', 'wps'], 'video' : ['avi', 'divx', 'mov', 'm4p', 'm4v', 'mkv', 'mp4', 'mpeg', 'mpg', 'ogv', 'qt', 'rm', 'rmvb', 'vob', 'webm', 'wmv']}; var ssfa_filetype_icons = {'adobe' : '&#x21;', 'application' : '&#x54;', 'audio' : '&#x43;', 'compression' : '&#x27;', 'css' : '&#x28;', 'image' : '&#x31;', 'msdoc' : '&#x23;', 'msexcel' : '&#x24;', 'openoffice' : '&#x22;', 'powerpoint' : '&#x26;', 'script' : '&#x25;', 'text' : '&#x2e;', 'video' : '&#x57;', 'unknown' : '&#x29;'} </script>
+<link rel='dns-prefetch' href='//i0.wp.com'>
+<link rel='dns-prefetch' href='//i1.wp.com'>
+<link rel='dns-prefetch' href='//i2.wp.com'>
+<style type='text/css'>img#wpstats{display:none}</style><style type="text/css">#logo {padding-top:0px;}#logo {padding-bottom:0px;}#logo {margin-left:0px;}#logo {margin-right:0px;}#nav-main {margin-top:0px;}#nav-main {margin-bottom:0px;}.headerfont, .tp-caption {font-family:'Palatino Linotype', 'Book Antiqua', Palatino, serif;} 
+  .topbarmenu ul li {font-family:Lato;}
+  #kadbreadcrumbs {font-family:'MS Serif', 'New York', sans-serif;}input[type=number]::-webkit-inner-spin-button, input[type=number]::-webkit-outer-spin-button { -webkit-appearance: none; margin: 0; } input[type=number] {-moz-appearance: textfield;}.quantity input::-webkit-outer-spin-button,.quantity input::-webkit-inner-spin-button {display: none;}.product_item .product_details h5 {text-transform: none;}.product_item .product_details h5 {min-height:40px;}</style><!--[if lt IE 9]>
+<script src="http://quanteco.github.io./wp-content/themes/virtue/assets/js/vendor/respond.min.js"></script>
+<![endif]-->
+<style type="text/css" id="syntaxhighlighteranchor"></style>
+<link rel="icon" href="http://i0.wp.com/gregorybanderson.elementfx.com/wp-content/uploads/2015/01/cropped-iconga-54b80e4ev1_site_icon.png?fit=32%2C32" sizes="32x32" />
+<link rel="icon" href="http://i0.wp.com/gregorybanderson.elementfx.com/wp-content/uploads/2015/01/cropped-iconga-54b80e4ev1_site_icon.png?fit=192%2C192" sizes="192x192" />
+<link rel="apple-touch-icon-precomposed" href="http://i0.wp.com/gregorybanderson.elementfx.com/wp-content/uploads/2015/01/cropped-iconga-54b80e4ev1_site_icon.png?fit=180%2C180" />
+<meta name="msapplication-TileImage" content="http://i0.wp.com/gregorybanderson.elementfx.com/wp-content/uploads/2015/01/cropped-iconga-54b80e4ev1_site_icon.png?fit=270%2C270" />
+<style type="text/css" title="dynamic-css" class="options-output">header #logo a.brand,.logofont{font-family:Lato;line-height:40px;font-weight:400;font-style:normal;font-size:32px;}.kad_tagline{font-family:Lato;line-height:20px;font-weight:400;font-style:normal;color:#444444;font-size:14px;}.product_item .product_details h5{font-family:Lato;line-height:20px;font-weight:normal;font-style:700;font-size:16px;}h1{font-family:'Palatino Linotype', 'Book Antiqua', Palatino, serif;line-height:40px;font-weight:400;font-style:normal;font-size:38px;}h2{font-family:'Bookman Old Style', serif;line-height:40px;font-weight:normal;font-style:normal;font-size:32px;}h3{font-family:'Bookman Old Style', serif;line-height:30px;font-weight:400;font-style:normal;font-size:24px;}h4{font-family:'Bookman Old Style', serif;line-height:25px;font-weight:400;font-style:normal;font-size:20px;}h5{font-family:'Bookman Old Style', serif;line-height:24px;font-weight:700;font-style:normal;font-size:18px;}body{font-family:'MS Serif', 'New York', sans-serif;line-height:20px;font-weight:400;font-style:normal;font-size:14px;}#nav-main ul.sf-menu a{font-family:Lato;line-height:18px;font-weight:400;font-style:normal;font-size:12px;}#nav-second ul.sf-menu a{font-family:Lato;line-height:22px;font-weight:400;font-style:normal;font-size:18px;}.kad-nav-inner .kad-mnav, .kad-mobile-nav .kad-nav-inner li a,.nav-trigger-case{font-family:Lato;line-height:20px;font-weight:400;font-style:normal;font-size:16px;}</style></head>
+  <body class="single single-post postid-229 single-format-standard wide morans-eigenvector-maps">
+    <div id="wrapper" class="container">
+    <div id="kt-skip-link"><a href="#content">Skip to Main Content</a></div><header class="banner headerclass" role="banner">
+  <section id="topbar" class="topclass">
+    <div class="container">
+      <div class="row">
+        <div class="col-md-6 col-sm-6 kad-topbar-left">
+          <div class="topbarmenu clearfix">
+          <ul id="menu-site-links" class="sf-menu"><li  class="menu-home menu-item-297"><a href="http://quanteco.github.io./">Home</a></li>
+<li  class="menu-research menu-item-296"><a href="http://quanteco.github.io./research/">Research</a></li>
+<li  class="menu-eportfolio menu-item-295"><a href="http://quanteco.github.io./eportfolio/">ePortfolio</a></li>
+<li  class="menu-blog-on-quantitative-ecology current_page_parent menu-item-323"><a href="http://quanteco.github.io./blog-on-quantitative-ecology/">Blog on Quantitative Ecology</a></li>
+<li  class="menu-curriculum-vitae menu-item-325"><a href="http://quanteco.github.io./curriculum-vitae/">Curriculum Vitae</a></li>
+<li  class="menu-contact menu-item-324"><a href="http://quanteco.github.io./contact/">Contact</a></li>
+</ul>                                  </div>
+        </div><!-- close col-md-6 --> 
+        <div class="col-md-6 col-sm-6 kad-topbar-right">
+          <div id="topbar-search" class="topbar-widget">
+            <form role="search" method="get" id="searchform" class="form-search" action="http://quanteco.github.io./">
+  <label class="hide" for="s">Search for:</label>
+  <input type="text" value="" name="s" id="s" class="search-query" placeholder="Search">
+  <button type="submit" id="searchsubmit" class="search-icon"><i class="icon-search"></i></button>
+</form>        </div>
+        </div> <!-- close col-md-6-->
+      </div> <!-- Close Row -->
+    </div> <!-- Close Container -->
+  </section>
+  <div class="container">
+    <div class="row">
+          <div class="col-md-4 clearfix kad-header-left">
+            <div id="logo" class="logocase">
+              <a class="brand logofont" href="http://quanteco.github.io./">
+                              </a>
+                         </div> <!-- Close #logo -->
+       </div><!-- close logo span -->
+              
+    </div> <!-- Close Row -->
+     
+  </div> <!-- Close Container -->
+   
+     </header>      <div class="wrap contentclass" role="document">
+
+          <div id="content" class="container">
+    <div class="row single-article" itemscope="" itemtype="http://schema.org/BlogPosting">
+      <div class="main col-lg-9 col-md-8" role="main">
+                  <article class="post-229 post type-post status-publish format-standard has-post-thumbnail hentry category-r tag-autocorrelation tag-dbmem tag-mem tag-spatial">
+                                  <div class="imghoverclass postfeat post-single-img" itemprop="image">
+                        <a href="http://quanteco.github.io./wp-content/uploads/2015/01/autopatterns.png" data-rel="lightbox" class="lightboxhover">
+                          <img src="http://i1.wp.com/gregorybanderson.elementfx.com/wp-content/uploads/2015/01/autopatterns.png?resize=848%2C400" itemprop="image" alt="Moran&#8217;s Eigenvector Maps" />
+                        </a>
+                      </div>
+                                <div class="postmeta updated">
+      <div class="postdate bg-lightgray headerfont" itemprop="datePublished">
+      <span class="postday">4</span>
+      Jan 2016    </div>
+</div> 
+    <header>
+      <h1 class="entry-title" itemprop="name headline">Moran&#8217;s Eigenvector Maps</h1>
+      <div class="subhead">
+    <span class="postauthortop author vcard">
+    <i class="icon-user"></i> by  <span itemprop="author"><a href="http://quanteco.github.io./author/quanteco/" class="fn" rel="author">quanteco</a></span> |</span>
+      
+    <span class="postedintop"><i class="icon-folder-open"></i> posted in: <a href="http://quanteco.github.io./category/r/" rel="category tag">R</a></span>     <span class="kad-hidepostedin">|</span>
+    <span class="postcommentscount">
+    <i class="icon-comments-alt"></i> 0    </span>
+</div>  
+    </header>
+    <div class="entry-content" itemprop="description articleBody">
+      <p>In conjunction with my blog posts on <a title="Moran’s I (Calculation and Testing)" href="http://www.gregbanderson.com/?p=61">Moran&#8217;s I</a> and <a title="Developing Distance Based Neighborhood Matrices" href="http://www.gregbanderson.com/?p=41">developing distance based weight matrices</a>, for this blog post, I will be continuing my topic of Moran&#8217;s Eigenvector Maps. The final part of the process is a function to perform principal coordinates of neighbor matrices (PCNM) on the weighted neighborhood matrix (<img src="//s0.wp.com/latex.php?latex=%5Cmathbf%7BW%7D&#038;bg=ffffff&#038;fg=000&#038;s=0" alt="&#92;mathbf{W}" title="&#92;mathbf{W}" class="latex" />) developed with the <a href="https://github.com/quanteco/quanteco/blob/master/R/weightmatrix.R" target="_blank">weightmatrix function</a>. By performing PCNM on this matrix, we are able to use the eigenvectors as regressors within a linear modeling context, thus filtering any dependent structures in our data by partitioning the autocorrelation into synthetic variates.</p>
+<h2>Background Information</h2>
+<p>The filtering approach was first proposed by Griffith (2000) using a binary connectivity matrix, where the eigenvectors and eigenvalues are extracted from the following matrix operation:</p>
+<p style="text-align: center;"><img src="//s0.wp.com/latex.php?latex=%28%5Cmathbf%7BI%7D-%5Cmathbf%7Bjj%7D%5ET%2Fn%29%5Cmathbf%7BC%7D%28%5Cmathbf%7BI%7D-%5Cmathbf%7Bjj%7D%5ET%2Fn%29+&#038;bg=ffffff&#038;fg=000&#038;s=2" alt="(&#92;mathbf{I}-&#92;mathbf{jj}^T/n)&#92;mathbf{C}(&#92;mathbf{I}-&#92;mathbf{jj}^T/n) " title="(&#92;mathbf{I}-&#92;mathbf{jj}^T/n)&#92;mathbf{C}(&#92;mathbf{I}-&#92;mathbf{jj}^T/n) " class="latex" />,</p>
+<p style="text-align: left;">where <img src="//s0.wp.com/latex.php?latex=n&#038;bg=ffffff&#038;fg=000&#038;s=0" alt="n" title="n" class="latex" /> is the number of points in the domain (e.g., the number of sampling site), <img src="//s0.wp.com/latex.php?latex=%5Cmathbf%7Bj%7D&#038;bg=ffffff&#038;fg=000&#038;s=0" alt="&#92;mathbf{j}" title="&#92;mathbf{j}" class="latex" /> is a vector of ones with length <img src="//s0.wp.com/latex.php?latex=n&#038;bg=ffffff&#038;fg=000&#038;s=0" alt="n" title="n" class="latex" />, <img src="//s0.wp.com/latex.php?latex=%5Cmathbf%7BI%7D&#038;bg=ffffff&#038;fg=000&#038;s=0" alt="&#92;mathbf{I}" title="&#92;mathbf{I}" class="latex" /> is the identity matrix, <img src="//s0.wp.com/latex.php?latex=T&#038;bg=ffffff&#038;fg=000&#038;s=0" alt="T" title="T" class="latex" /> is the transpose of the matrix, and <img src="//s0.wp.com/latex.php?latex=%5Cmathbf%7BC%7D&#038;bg=ffffff&#038;fg=000&#038;s=0" alt="&#92;mathbf{C}" title="&#92;mathbf{C}" class="latex" /> is a binary connectivity matrix. If you read my <a title="Moran’s I (Calculation and Testing)" href="http://www.gregbanderson.com/?p=61">blog post on Moran&#8217;s I</a>, this operation should look rather familiar to you because it is taken directly from the formula for calculating Moran&#8217;s I.</p>
+<p style="text-align: left;">If we wanted to perform this filtering approach as Griffith (2000) suggested, we could use the <a href="https://github.com/quanteco/quanteco/blob/master/R/weightmatrix.R" target="_blank">weightmatrix function</a> we created in a <a title="Developing Distance Based Neighborhood Matrices" href="http://www.gregbanderson.com/?p=41">previous post</a>:</p>
+<pre class="brush: r; light: true; title: ; notranslate" title="">
+C&amp;lt;-weightmatrix(D, method=&quot;connectivity&quot;)
+</pre>
+<p>As Griffith and Peres-Neto (2006) show, this is similar to the PCNM procedure proposed by Borcard and Legendre (2002; see below).</p>
+<p>When this filtering method is employed correctly, the first eigenvector (<img src="//s0.wp.com/latex.php?latex=%5Cmathbf%7Bu%7D_1+&#038;bg=ffffff&#038;fg=000&#038;s=0" alt="&#92;mathbf{u}_1 " title="&#92;mathbf{u}_1 " class="latex" />) is a set of values that has the greatest Moran&#8217;s I coefficient achievable from the connectivity matrix, the second eigenvector represents the second greatest achievable, and so on&#8230;</p>
+<p>Griffith (2000) suggested that these eigenvectors represent distinct pattern descriptions of latent autocorrelation in the variables.</p>
+<p>The PCNM filtering method (Borcard and Legendre 2002) performs a similar matrix operation on a truncated weight matrix (<img src="//s0.wp.com/latex.php?latex=%5Cmathbf%7BW%7D&#038;bg=ffffff&#038;fg=000&#038;s=0" alt="&#92;mathbf{W}" title="&#92;mathbf{W}" class="latex" />):</p>
+<p style="text-align: center;"><img src="//s0.wp.com/latex.php?latex=%28%5Cmathbf%7BI%7D-%5Cmathbf%7Bjj%7D%5ET%2Fn%29%5Cmathbf%7BW%7D%28%5Cmathbf%7BI%7D-%5Cmathbf%7Bjj%7D%5ET%2Fn%29+&#038;bg=ffffff&#038;fg=000&#038;s=2" alt="(&#92;mathbf{I}-&#92;mathbf{jj}^T/n)&#92;mathbf{W}(&#92;mathbf{I}-&#92;mathbf{jj}^T/n) " title="(&#92;mathbf{I}-&#92;mathbf{jj}^T/n)&#92;mathbf{W}(&#92;mathbf{I}-&#92;mathbf{jj}^T/n) " class="latex" />.</p>
+<p style="text-align: left;">Dray et al. (2006) further modified this approach and demonstrated that it falls under a class of multivariate approaches known as Moran&#8217;s Eigenvector Maps. In particular, the Borcard and Legendre (2002) approach is known as distance-based Moran&#8217;s Eigenvector Map&#8217;s (dbmem). The truncated weight matrix for dbmem (<img src="//s0.wp.com/latex.php?latex=%5Cmathbf%7BW%7D&#038;bg=ffffff&#038;fg=000&#038;s=0" alt="&#92;mathbf{W}" title="&#92;mathbf{W}" class="latex" />) can also be created with the <a href="https://github.com/quanteco/quanteco/blob/master/R/weightmatrix.R" target="_blank">weightmatrix function</a>:</p>
+<pre class="brush: r; light: true; title: ; notranslate" title="">
+W&amp;lt;-weightmatrix(D, method=&quot;dbmem&quot;)
+</pre>
+<p style="text-align: left;">If you recall, in this approach we calculate <img src="//s0.wp.com/latex.php?latex=%5Cmathbf%7BW%7D&#038;bg=ffffff&#038;fg=000&#038;s=0" alt="&#92;mathbf{W}" title="&#92;mathbf{W}" class="latex" /> as the Hadamard product of <img src="//s0.wp.com/latex.php?latex=%5Cmathbf%7BB%7D&#038;bg=ffffff&#038;fg=000&#038;s=0" alt="&#92;mathbf{B}" title="&#92;mathbf{B}" class="latex" /> and <img src="//s0.wp.com/latex.php?latex=%5Cmathbf%7BA%7D&#038;bg=ffffff&#038;fg=000&#038;s=0" alt="&#92;mathbf{A}" title="&#92;mathbf{A}" class="latex" />, where <img src="//s0.wp.com/latex.php?latex=%5Cmathbf%7BB%7D&#038;bg=ffffff&#038;fg=000&#038;s=0" alt="&#92;mathbf{B}" title="&#92;mathbf{B}" class="latex" /> is the connectivity matrix and <img src="//s0.wp.com/latex.php?latex=%5Cmathbf%7BA%7D&#038;bg=ffffff&#038;fg=000&#038;s=0" alt="&#92;mathbf{A}" title="&#92;mathbf{A}" class="latex" /> is defined as:</p>
+<p style="text-align: center;"><img src="//s0.wp.com/latex.php?latex=%5Cmathbf%7BA%7D%3D%5Ba_%7Bij%7D%5D%3D1-%5CBig+%28%5Cfrac%7Bd_%7Bij%7D%7D%7B4+%5Ctimes+thresh%7D+%5CBig+%29%5E2+&#038;bg=ffffff&#038;fg=000&#038;s=2" alt="&#92;mathbf{A}=[a_{ij}]=1-&#92;Big (&#92;frac{d_{ij}}{4 &#92;times thresh} &#92;Big )^2 " title="&#92;mathbf{A}=[a_{ij}]=1-&#92;Big (&#92;frac{d_{ij}}{4 &#92;times thresh} &#92;Big )^2 " class="latex" /></p>
+<p style="text-align: left;">and <img src="//s0.wp.com/latex.php?latex=thresh&#038;bg=ffffff&#038;fg=000&#038;s=0" alt="thresh" title="thresh" class="latex" /> is defined as the maximum distance on a minimum spanning tree.</p>
+<h2 style="text-align: left;">Function Development</h2>
+<p style="text-align: left;">The function to perform MEM could be fairly simple, especially if we were only interested in the eigenvectors of the neighborhood or connectivity matrix. However, Dray et al. (2006) showed that by weighting the neighborhood matrix properly, we can derive the Moran&#8217;s I coefficient directly from the eigenvalues. This is done in the function from my <a href="https://github.com/quanteco/quanteco" target="_blank">quanteco github repository</a> that is listed below. In this function, I add a few operations that ensure a symmetric matrix and remove vectors that do not describe any autocorrelation patterns.</p>
+<p style="text-align: left;">
+<pre class="brush: r; title: ; notranslate" title="">mem&lt;-function(W,X=NULL){
+  W&lt;-as.matrix(W)
+  diag(W)&lt;-0  
+  W&lt;-0.5*(t(W)+W)
+  n&lt;-nrow(W)
+  W &lt;- W/sum(W)
+  j&lt;-array(1,dim=c(n,1))
+  I&lt;-diag(n)
+  if(class(X)==&quot;NULL&quot;){eigen.function&lt;-eigen(((I-j%*%t(j)/n)%*%W%*%(I-j%*%t(j)/n))*n)}
+  else{
+    writeLines(&quot;Covariate Matrix Supplied&quot;)
+    X&lt;-cbind(j,X)
+    eigen.function&lt;-eigen((I-X%*%solve(t(X)%*%X)%*%t(X))%*%W%*%(I-X%*%solve(t(X)%*%X)%*%t(X)))
+  }
+  value0&lt;-which(abs(eigen.function$values)/max(abs(eigen.function$values))&lt;1e-07)
+  if (length(value0) == 0) 
+    stop(&quot;Abnormal Output : No Null Eigenvalue&quot;)
+  else if (length(value0) == 1) 
+    value0 &lt;- (1:n)[-value0]
+  else if (length(value0) &gt; 1) {
+    w &lt;- cbind(j*sqrt(1/n), eigen.function$vectors[, value0])
+    w &lt;- qr.Q(qr(w))
+    eigen.function$values[value0] &lt;- 0
+    eigen.function$vectors[, value0] &lt;- w[, -ncol(w)]
+    value0 &lt;- (1:n)[-value0[1]]
+  }
+  vectors&lt;-eigen.function$vectors[, value0]/sqrt(1/n)
+  values&lt;-eigen.function$values[value0]
+  z&lt;-list(vectors=vectors,values=values,W=W)
+}</pre>
+<div class="wp-git-embed" style="margin-bottom:10px; border:1px solid #CCC; text-align:right; width:99%; margin-top:-13px; font-size:11px; font-style:italic;"><span style="display:inline-block; padding:4px;">mem.R</span><a style="display:inline-block; padding:4px 6px;" href="https://raw.github.com/quanteco/quanteco/master/R/mem.R#L43" target="_blank">view raw</a><a style="display:inline-block; padding:4px 6px; float:left;" href="https://github.com/quanteco/quanteco/blob/master/R/mem.R#L43" target="_blank">view file on <strong>GitHub</strong></a></div>
+</p>
+<p style="text-align: left;">This function returns (1) the eigenvectors to be used as regressors in a model, (2) the eigenvalues that are now the associated Moran&#8217;s I coefficient for the respective eigenvector, and (3) the neighborhood matrix (<img src="//s0.wp.com/latex.php?latex=%5Cmathbf%7BW%7D&#038;bg=ffffff&#038;fg=000&#038;s=0" alt="&#92;mathbf{W}" title="&#92;mathbf{W}" class="latex" />) used to derive the eigenvectors and eigenvalues.</p>
+<p style="text-align: left;">I have also included in this function the ability to supply a covariate matrix (<img src="//s0.wp.com/latex.php?latex=%5Cmathbf%7BX%7D&#038;bg=ffffff&#038;fg=000&#038;s=0" alt="&#92;mathbf{X}" title="&#92;mathbf{X}" class="latex" />). This is for the case where you might have multicolinearity issues between <img src="//s0.wp.com/latex.php?latex=%5Cmathbf%7BX%7D&#038;bg=ffffff&#038;fg=000&#038;s=0" alt="&#92;mathbf{X}" title="&#92;mathbf{X}" class="latex" /> and the derived eigenvectors. Griffith (2000) demonstrates this can be performed with a connectivity matrix (<img src="//s0.wp.com/latex.php?latex=%5Cmathbf%7BC%7D&#038;bg=ffffff&#038;fg=000&#038;s=0" alt="&#92;mathbf{C}" title="&#92;mathbf{C}" class="latex" />); however, it&#8217;s validity for a weight matrix is not known. Essentially, if a covariate matrix is supplied, we turn the matrix operation into a regression problem:</p>
+<p style="text-align: center;"><img src="//s0.wp.com/latex.php?latex=%28%5Cmathbf%7BI%7D-%5Cmathbf%7BX%7D%28%5Cmathbf%7BX%7D%5ET%5Cmathbf%7BX%7D%29%5E%7B-1%7D%5Cmathbf%7BX%7D%5ET%29%5Cmathbf%7BC%7D%28%5Cmathbf%7BI%7D-%5Cmathbf%7BX%7D%28%5Cmathbf%7BX%7D%5ET%5Cmathbf%7BX%7D%29%5E%7B-1%7D%5Cmathbf%7BX%7D%5ET%29+&#038;bg=ffffff&#038;fg=000&#038;s=2" alt="(&#92;mathbf{I}-&#92;mathbf{X}(&#92;mathbf{X}^T&#92;mathbf{X})^{-1}&#92;mathbf{X}^T)&#92;mathbf{C}(&#92;mathbf{I}-&#92;mathbf{X}(&#92;mathbf{X}^T&#92;mathbf{X})^{-1}&#92;mathbf{X}^T) " title="(&#92;mathbf{I}-&#92;mathbf{X}(&#92;mathbf{X}^T&#92;mathbf{X})^{-1}&#92;mathbf{X}^T)&#92;mathbf{C}(&#92;mathbf{I}-&#92;mathbf{X}(&#92;mathbf{X}^T&#92;mathbf{X})^{-1}&#92;mathbf{X}^T) " class="latex" />,</p>
+<p style="text-align: left;">where $latex \mathbf{X}$ is a <img src="//s0.wp.com/latex.php?latex=n+times+p&#038;bg=ffffff&#038;fg=000&#038;s=0" alt="n times p" title="n times p" class="latex" /> matrix of regressors.</p>
+<h2 style="text-align: left;">Example Application</h2>
+<p>Now that we have defined our function, we can try it out. First we need to simulate some data, define W, and force the data to be autocorrelated. As with most blog posts, the functions used below can be installed directly from my <a href="https://github.com/quanteco/quanteco" target="_blank">quanteco github repository</a> using the following commands:</p>
+<pre class="brush: r; title: ; notranslate" title="">
+install.packages(&quot;devtools&quot;)
+library(devtools)
+install_github(&quot;quanteco/quanteco&quot;)
+library(quanteco)
+</pre>
+<p>In the example data below, we will create data where there should be no relationship between <img src="//s0.wp.com/latex.php?latex=x&#038;bg=ffffff&#038;fg=000&#038;s=0" alt="x" title="x" class="latex" /> (the regressor) and <img src="//s0.wp.com/latex.php?latex=y&#038;bg=ffffff&#038;fg=000&#038;s=0" alt="y" title="y" class="latex" /> (the response).</p>
+<pre class="brush: r; title: ; notranslate" title="">
+set.seed(1)
+dat&amp;lt;-expand.grid(x.coor=1:10, y.coor=1:10) #create spatial grid data
+n&amp;lt;-dim(dat)[1] #number of sample sites
+x&amp;lt;-rnorm(n) #random independent variable
+beta&amp;lt;-c(1,0) #Regression coefficients; Note the 0 to create no relationship
+y&amp;lt;-rnorm(n,mean=cbind(1,x)%*%beta) #Create random response
+W&amp;lt;-weightmatrix(dist(dat)) #Create neighborhood matrix
+x&amp;lt;-sim.autocorrelated(x,0.25,W) #Force x to be autocorrelated
+y&amp;lt;-sim.autocorrelated(y,0.25,W) #Force y to be similarly autocorrelated
+</pre>
+<p>Now that the data has be created, let&#8217;s test whether <img src="//s0.wp.com/latex.php?latex=y&#038;bg=ffffff&#038;fg=000&#038;s=0" alt="y" title="y" class="latex" /> is related to <img src="//s0.wp.com/latex.php?latex=x&#038;bg=ffffff&#038;fg=000&#038;s=0" alt="x" title="x" class="latex" />.</p>
+<pre class="brush: r; title: ; notranslate" title="">
+summary(lm(y~x))
+</pre>
+<p>This gives us the following result:</p>
+<pre>Call:
+lm(formula = y ~ x)
+
+Residuals:
+ Min 1Q Median 3Q Max 
+-6.0216 -1.5208 0.0958 1.6189 5.9296 
+
+Coefficients:
+ Estimate Std. Error t value Pr(&gt;|t|) 
+(Intercept) 8.1437 0.2704 30.119 &lt; 2e-16 ***
+x          -0.5466 0.1943 -2.814 0.00592 ** 
+---
+Signif. codes: 0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+
+Residual standard error: 2.56 on 98 degrees of freedom
+Multiple R-squared: 0.07475, Adjusted R-squared: 0.0653 
+F-statistic: 7.917 on 1 and 98 DF, p-value: 0.005919</pre>
+<p>As we can see, the model suggest there is a relationship between <img src="//s0.wp.com/latex.php?latex=y&#038;bg=ffffff&#038;fg=000&#038;s=0" alt="y" title="y" class="latex" /> and <img src="//s0.wp.com/latex.php?latex=x&#038;bg=ffffff&#038;fg=000&#038;s=0" alt="x" title="x" class="latex" />, but no such relationship should actually exist. So let&#8217;s investigate why this might be the case.  We can see whether autocorrelation exists in <img src="//s0.wp.com/latex.php?latex=y&#038;bg=ffffff&#038;fg=000&#038;s=0" alt="y" title="y" class="latex" /> and <img src="//s0.wp.com/latex.php?latex=x&#038;bg=ffffff&#038;fg=000&#038;s=0" alt="x" title="x" class="latex" /> using the <a href="https://github.com/quanteco/quanteco/blob/master/R/moranstest.R" target="_blank">morans.test </a>function.</p>
+<pre class="brush: r; light: true; title: ; notranslate" title="">
+morans.test(y,W)
+</pre>
+<p>This gives us:</p>
+<pre>Moran's I test for Autocorrelation
+ |++++++++++++++++++++++++++++++++++++++++++++++++++| 100%
+$Observed
+[1] 0.6565452
+
+$Expected
+[1] -0.01010101
+
+$p.value
+[1] 0.001</pre>
+<p>We get a similar result for x:</p>
+<pre>Moran's I test for Autocorrelation
+ |++++++++++++++++++++++++++++++++++++++++++++++++++| 100%
+$Observed
+[1] 0.516372
+
+$Expected
+[1] -0.01010101
+
+$p.value
+[1] 0.001</pre>
+<p>Now let&#8217;s apply the mem function to see if by including the eigenvectors we can get the proper answer.</p>
+<pre class="brush: r; light: true; title: ; notranslate" title="">
+out&amp;lt;-mem(W) #Perform mem
+pvals&amp;lt;-apply(out$vectors[,out$values&amp;gt;0],2,function(x)morans.test(x,
+  W,print.results=F)$p.value) #get Moran's I Monte-Carlo p-values for all eigenvectors with positive eigenvalues
+vecs&amp;lt;-out$vectors[,out$values&amp;gt;0][,pvals&amp;lt;0.05] #Select vectors with p-values less than 0.05
+summary(lm(y~x+vecs)) #use vectors in linear model
+</pre>
+<p>This gives us the following output (shortened for the post).</p>
+<pre>Call:
+lm(formula = y ~ x + vecs)
+
+Residuals:
+ Min 1Q Median 3Q Max
+-1.33746 -0.48799 -0.00139 0.45101 1.49140 
+
+Coefficients:
+ Estimate Std. Error t value Pr(&gt;|t|)
+(Intercept) 7.93506 0.10660 74.439 &lt; 2e-16 ***
+x          -0.08061 0.14151 -0.570 0.571126
+vecs1      -0.15088 0.08621 -1.750 0.085376 .
+vecs2       0.69919 0.09216 7.587 3.02e-10 ***
+vecs3       0.01022 0.09542 0.107 0.915061
+vecs4      -1.33712 0.10611 -12.601 &lt; 2e-16 ***
+vecs5       0.27562 0.11438 2.410 0.019156 *
+vecs6       0.24872 0.09116 2.728 0.008411 **
+vecs7       0.02828 0.08733 0.324 0.747254
+vecs8       0.10885 0.08580 1.269 0.209642
+vecs9       0.70095 0.08710 8.048 5.09e-11 ***
+vecs10     -0.42322 0.08613 -4.914 7.68e-06 ***
+vecs10     -0.42358 0.08663 -4.890 8.62e-06 ***</pre>
+<p>This gives us the answer we expected. Now note that in the above we used all positive eigenvectors that have a significant Moran&#8217;s I value as regressors within the model.  This is one way of selecting eigenvectors, but there are many other ways, and I will tackle this issue in a later post.   For now, we are happy to get no relationship between <img src="//s0.wp.com/latex.php?latex=y&#038;bg=ffffff&#038;fg=000&#038;s=0" alt="y" title="y" class="latex" /> and <img src="//s0.wp.com/latex.php?latex=x&#038;bg=ffffff&#038;fg=000&#038;s=0" alt="x" title="x" class="latex" />.</p>
+<p>Now let&#8217;s perform the same operations on data where there is a relationship between <img src="//s0.wp.com/latex.php?latex=y&#038;bg=ffffff&#038;fg=000&#038;s=0" alt="y" title="y" class="latex" /> and <img src="//s0.wp.com/latex.php?latex=x&#038;bg=ffffff&#038;fg=000&#038;s=0" alt="x" title="x" class="latex" />.</p>
+<pre class="brush: r; title: ; notranslate" title="">
+set.seed(1)
+dat&amp;lt;-expand.grid(x.coor=1:10, y.coor=1:10)
+n&amp;lt;-dim(dat)[1]
+x&amp;lt;-rnorm(n)
+beta&amp;lt;-c(1,3) #Note the 3 designating a relationship
+y&amp;lt;-rnorm(n,mean=cbind(1,x)%*%beta)
+W&amp;lt;-weightmatrix(dist(dat))
+x&amp;lt;-sim.autocorrelated(x,0.25,W)
+y&amp;lt;-sim.autocorrelated(y,0.25,W)
+out&amp;lt;-mem(W)
+pvals&amp;lt;-apply(out$vectors[,out$values&amp;gt;0],2,function(x)morans.test(x,W,print.results=F)$p.value)
+vecs&amp;lt;-out$vectors[,out$values&amp;gt;0][,pvals&amp;lt;0.05]
+summary(lm(y~x+vecs))
+</pre>
+<p>This gives us the following result (shortened).</p>
+<pre>Call:
+lm(formula = y ~ x + vecs)
+
+Residuals:
+     Min       1Q   Median       3Q      Max 
+-1.37860 -0.46336 -0.03353  0.44521  1.37216 
+
+Coefficients:
+             Estimate Std. Error t value Pr(&gt;|t|)    
+(Intercept)  7.944726   0.107152  74.144  &lt; 2e-16 ***
+x            2.897794   0.143398  20.208  &lt; 2e-16 ***
+vecs1       -0.152266   0.086285  -1.765 0.082973 .  
+vecs2        0.704350   0.092381   7.624 2.90e-10 ***
+vecs3        0.016613   0.095718   0.174 0.862824    
+vecs4       -1.327580   0.106657 -12.447  &lt; 2e-16 ***
+vecs5        0.264066   0.115093   2.294 0.025473 *  
+vecs6        0.243988   0.091362   2.671 0.009851 ** 
+vecs7        0.025739   0.087437   0.294 0.769547    
+vecs8        0.109363   0.085863   1.274 0.207945    
+vecs9        0.703297   0.087196   8.066 5.35e-11 ***
+vecs10      -0.424485   0.086206  -4.924 7.62e-06 ***</pre>
+<p>This is close to what we expected.</p>
+<p>Finally, we might also want to plot the patterns of the eigenvectors.</p>
+<p>We can do this using ggplot2 and the gridExtra package as follows:</p>
+<pre class="brush: r; title: ; notranslate" title="">
+library(ggplot2)
+library(gridExtra)
+plots&amp;lt;-lapply(1:6,function(x)ggplot(data.frame(dat,vec=vecs[,x]))+
+geom_point(aes(y=y.coor,x=x.coor,size=abs(vec),color=vec))+theme_classic(base_family=&quot;serif&quot;)+
+theme(legend.position=&quot;none&quot;)+scale_colour_gradient2())
+grid.arrange(plots[[1]],plots[[2]],plots[[3]],plots[[4]],plots[[5]],plots[[6]],nrow=2)
+</pre>
+<p>The result of these commands can be seen at the top of the post in the feature image.</p>
+<h2 id="ref">References</h2>
+<p>Griffith, D. A. 2000. A linear regression solution to the spatial autocorrelation problem. <a href="http://link.springer.com/article/10.1007%2FPL00011451" target="_blank">Journal of Geographical Systems <strong>2</strong>: 141-156</a>.</p>
+<p>Griffith, D. A., and P. R. Peres-Neto. 2006. The flexibility of eigenfunction spatial analyses. <a href="http://www.esajournals.org/doi/abs/10.1890/0012-9658%282006%2987%5B2603%3ASMIETF%5D2.0.CO%3B2" target="_blank">Ecology <strong>87</strong>: 2603-2613.</a></p>
+<p>Borcard, D., and P. Legendre. 2002. All-scale spatial analysis of ecological data by means of principal coordinates of neighbour matrices. <a href="http://www.sciencedirect.com/science/article/pii/S0304380001005014" target="_blank">Ecological Modeling <strong>153</strong>:51-68</a>.</p>
+<p>Dray, S., P. Legendre, and P.R. Peres-Neto. 2006. Spatial modelling: a comprehensive framework for principal coordinate analysis of neighbour matrices (PCNM). <a href="http://www.sciencedirect.com/science/article/pii/S0304380006000925" target="_blank">Ecological Modelling <strong>156</strong>: 483-493.</a></p><div class="sharedaddy sd-sharing-enabled"><div class="robots-nocontent sd-block sd-social sd-social-icon sd-sharing"><h3 class="sd-title">Share this:</h3><div class="sd-content"><ul><li class="share-twitter"><a rel="nofollow" data-shared="sharing-twitter-229" class="share-twitter sd-button share-icon no-text" href="http://quanteco.github.io./2016/01/04/morans-eigenvector-maps/?share=twitter" target="_blank" title="Click to share on Twitter"><span></span><span class="sharing-screen-reader-text">Click to share on Twitter (Opens in new window)</span></a></li><li class="share-facebook"><a rel="nofollow" data-shared="sharing-facebook-229" class="share-facebook sd-button share-icon no-text" href="http://quanteco.github.io./2016/01/04/morans-eigenvector-maps/?share=facebook" target="_blank" title="Share on Facebook"><span></span><span class="sharing-screen-reader-text">Share on Facebook (Opens in new window)</span></a></li><li class="share-google-plus-1"><a rel="nofollow" data-shared="sharing-google-229" class="share-google-plus-1 sd-button share-icon no-text" href="http://quanteco.github.io./2016/01/04/morans-eigenvector-maps/?share=google-plus-1" target="_blank" title="Click to share on Google+"><span></span><span class="sharing-screen-reader-text">Click to share on Google+ (Opens in new window)</span></a></li><li class="share-end"></li></ul></div></div></div>
+<div id='jp-relatedposts' class='jp-relatedposts' >
+	<h3 class="jp-relatedposts-headline"><em>Related</em></h3>
+</div>    </div>
+    <footer class="single-footer">
+              <span class="posttags"><i class="icon-tag"></i> <a href="http://quanteco.github.io./tag/autocorrelation/" rel="tag">autocorrelation</a>, <a href="http://quanteco.github.io./tag/dbmem/" rel="tag">dbmem</a>, <a href="http://quanteco.github.io./tag/mem/" rel="tag">mem</a>, <a href="http://quanteco.github.io./tag/spatial/" rel="tag">spatial</a> </span>
+                                  </footer>
+    
+
+  <section id="respond">
+  				<div id="respond" class="comment-respond">
+			<h3 id="reply-title" class="comment-reply-title">Leave a Reply <small><a rel="nofollow" id="cancel-comment-reply-link" href="/2016/01/04/morans-eigenvector-maps/#respond" style="display:none;">Cancel reply</a></small></h3>				<form action="http://quanteco.github.io./wp-comments-post.php" method="post" id="commentform" class="comment-form" novalidate>
+					<p class="comment-form-comment"><label for="comment">Comment</label> <textarea id="comment" name="comment" cols="45" rows="8" class="input-xlarge" aria-required="true" required="required"></textarea></p><div class="row"><div class="col-md-4"><label for="author">Name <span class="comment-required">*</span></label> <input id="author" name="author" type="text" value="" aria-required="true" /></div>
+<div class="col-md-4"><label for="email">Email (will not be published) <span class="comment-required">*</span></label> <input type="email" class="text" name="email" id="email" value="" aria-required="true" /></div>
+<div class="col-md-4"><label for="url">Website</label> <input id="url" name="url" type="url" value="" /></div>
+</div><p class="form-submit"><input name="submit" type="submit" id="submit" class="kad-btn kad-btn-primary" value="Submit Comment" /> <input type='hidden' name='comment_post_ID' value='229' id='comment_post_ID' />
+<input type='hidden' name='comment_parent' id='comment_parent' value='0' />
+</p><p style="display: none;"><input type="hidden" id="akismet_comment_nonce" name="akismet_comment_nonce" value="4d9d9fb50c" /></p><p class="comment-subscription-form"><input type="checkbox" name="subscribe_comments" id="subscribe_comments" value="subscribe" style="width: auto; -moz-appearance: checkbox; -webkit-appearance: checkbox;" /> <label class="subscribe-label" id="subscribe-label" for="subscribe_comments">Notify me of follow-up comments by email.</label></p><p class="comment-subscription-form"><input type="checkbox" name="subscribe_blog" id="subscribe_blog" value="subscribe" style="width: auto; -moz-appearance: checkbox; -webkit-appearance: checkbox;" /> <label class="subscribe-label" id="subscribe-blog-label" for="subscribe_blog">Notify me of new posts by email.</label></p><p style="display: none;"><input type="hidden" id="ak_js" name="ak_js" value="171"/></p>				</form>
+					</div><!-- #respond -->
+		
+  </section><!-- /#respond -->
+  </article>
+</div>
+
+            
+                      <aside class="col-lg-3 col-md-4 kad-sidebar" role="complementary">
+              <div class="sidebar">
+                     <section id="virtue_about_with_image-3" class="widget-1 widget-first widget virtue_about_with_image"><div class="widget-inner">    <div class="kad_img_upload_widget">
+        <a href="http://quanteco.github.io./wp-content/uploads/2015/01/gregwinter2.jpg" rel="lightbox">        <img src="http://quanteco.github.io./wp-content/uploads/2015/01/gregwinter2.jpg" />
+        </a>            </div>
+
+    </div></section>    <section id="text-3" class="widget-2 widget widget_text"><div class="widget-inner"><h3>Gregory B. Anderson</h3>			<div class="textwidget">Dept. of Fish and Wildlife Conservation
+Virginia Polytechnic Institute and State University
+Blacksburg, VA 24061</div>
+		</div></section><section id="nav_menu-3" class="widget-3 widget widget_nav_menu"><div class="widget-inner"><h3>Site Links</h3><ul id="menu-site-links-1" class="menu"><li  class="menu-home menu-item-297"><a href="http://quanteco.github.io./">Home</a></li>
+<li  class="menu-research menu-item-296"><a href="http://quanteco.github.io./research/">Research</a></li>
+<li  class="menu-eportfolio menu-item-295"><a href="http://quanteco.github.io./eportfolio/">ePortfolio</a></li>
+<li  class="menu-blog-on-quantitative-ecology current_page_parent menu-item-323"><a href="http://quanteco.github.io./blog-on-quantitative-ecology/">Blog on Quantitative Ecology</a></li>
+<li  class="menu-curriculum-vitae menu-item-325"><a href="http://quanteco.github.io./curriculum-vitae/">Curriculum Vitae</a></li>
+<li  class="menu-contact menu-item-324"><a href="http://quanteco.github.io./contact/">Contact</a></li>
+</ul></div></section>    <section id="kadence_recent_posts-3" class="widget-4 widget kadence_recent_posts"><div class="widget-inner">    <h3>Recent Posts</h3>    <ul>
+        <li class="clearfix postclass">
+        <a href="http://quanteco.github.io./2016/01/05/testing-site-and-time-contributions-to-variance-in-spatiotemporal-counts/" title="Testing Site and Time Contributions to Variance in Spatiotemporal Counts" class="recentpost_featimg">
+          <img width="80" height="50" src="http://i1.wp.com/gregorybanderson.elementfx.com/wp-content/uploads/2015/01/propvar.png?resize=80%2C50" class="attachment-widget-thumb size-widget-thumb wp-post-image" alt="propvar" /></a>
+        <a href="http://quanteco.github.io./2016/01/05/testing-site-and-time-contributions-to-variance-in-spatiotemporal-counts/" title="Testing Site and Time Contributions to Variance in Spatiotemporal Counts" class="recentpost_title">Testing Site and Time Contributions to Variance in Spatiotemporal Counts</a>
+        <span class="recentpost_date">January 5, 2016</span>
+        </li>
+        <li class="clearfix postclass">
+        <a href="http://quanteco.github.io./2016/01/04/morans-eigenvector-maps/" title="Moran&#8217;s Eigenvector Maps" class="recentpost_featimg">
+          <img width="80" height="50" src="http://i1.wp.com/gregorybanderson.elementfx.com/wp-content/uploads/2015/01/autopatterns.png?resize=80%2C50" class="attachment-widget-thumb size-widget-thumb wp-post-image" alt="autopatterns" /></a>
+        <a href="http://quanteco.github.io./2016/01/04/morans-eigenvector-maps/" title="Moran&#8217;s Eigenvector Maps" class="recentpost_title">Moran&#8217;s Eigenvector Maps</a>
+        <span class="recentpost_date">January 4, 2016</span>
+        </li>
+        <li class="clearfix postclass">
+        <a href="http://quanteco.github.io./2015/12/29/morans-i-calculation-and-testing/" title="Moran&#8217;s I (Calculation and Testing)" class="recentpost_featimg">
+          <img width="80" height="50" src="http://i0.wp.com/gregorybanderson.elementfx.com/wp-content/uploads/2015/01/moransi.png?resize=80%2C50" class="attachment-widget-thumb size-widget-thumb wp-post-image" alt="moransi" /></a>
+        <a href="http://quanteco.github.io./2015/12/29/morans-i-calculation-and-testing/" title="Moran&#8217;s I (Calculation and Testing)" class="recentpost_title">Moran&#8217;s I (Calculation and Testing)</a>
+        <span class="recentpost_date">December 29, 2015</span>
+        </li>
+        <li class="clearfix postclass">
+        <a href="http://quanteco.github.io./2015/12/15/developing-distance-based-neighborhood-matrices/" title="Developing Distance Based Neighborhood Matrices" class="recentpost_featimg">
+          <img width="80" height="50" src="http://i1.wp.com/gregorybanderson.elementfx.com/wp-content/uploads/2015/01/neighborhood.png?resize=80%2C50" class="attachment-widget-thumb size-widget-thumb wp-post-image" alt="neighborhood" /></a>
+        <a href="http://quanteco.github.io./2015/12/15/developing-distance-based-neighborhood-matrices/" title="Developing Distance Based Neighborhood Matrices" class="recentpost_title">Developing Distance Based Neighborhood Matrices</a>
+        <span class="recentpost_date">December 15, 2015</span>
+        </li>
+        <li class="clearfix postclass">
+        <a href="http://quanteco.github.io./2015/12/01/pastehelloworld/" title="paste(&#8220;Hello&#8221;,&#8221;World&#8221;)" class="recentpost_featimg">
+          <img width="80" height="50" src="http://i2.wp.com/gregorybanderson.elementfx.com/wp-content/uploads/2015/01/helloworld.png?resize=80%2C50" class="attachment-widget-thumb size-widget-thumb wp-post-image" alt="helloworld" /></a>
+        <a href="http://quanteco.github.io./2015/12/01/pastehelloworld/" title="paste(&#8220;Hello&#8221;,&#8221;World&#8221;)" class="recentpost_title">paste(&#8220;Hello&#8221;,&#8221;World&#8221;)</a>
+        <span class="recentpost_date">December 1, 2015</span>
+        </li>
+        </ul>
+    </div></section><section id="nav_menu-4" class="widget-5 widget widget_nav_menu"><div class="widget-inner"><h3>Recent Papers</h3><ul id="menu-recent-papers" class="menu"><li  class="menu-multi-scale-occupancy-models-to-infer-host-and-site-occupancy menu-item-344"><a href="http://www.sciencedirect.com/science/article/pii/S0380133015000039">Multi-scale Occupancy Models to Infer Host and Site Occupancy</a></li>
+<li  class="menu-round-gobies-and-the-ecology-of-vhsv-genotype-ivb menu-item-306"><a target="_blank" href="http://www.sciencedirect.com/science/article/pii/S0380133014001853">Round Gobies and the Ecology of VHSV Genotype IVb</a></li>
+<li  class="menu-dealing-with-uncertainty-in-fish-passage menu-item-298"><a target="_blank" href="http://link.springer.com/article/10.1007%2Fs00267-012-9886-6">Dealing with Uncertainty in Fish Passage</a></li>
+<li  class="menu-cyprinid-herpesvirus-3-in-the-great-lakes menu-item-299"><a target="_blank" href="http://www.jwildlifedis.org/doi/abs/10.7589/2012-02-062">Cyprinid Herpesvirus-3 in the Great Lakes</a></li>
+<li  class="menu-occupancy-estimation-of-holiday-darter menu-item-300"><a target="_blank" href="http://www.tandfonline.com/doi/abs/10.1080/00028487.2011.644193">Occupancy Estimation of Holiday Darter</a></li>
+</ul></div></section><section id="nav_menu-5" class="widget-6 widget widget_nav_menu"><div class="widget-inner"><h3>ePortfolio</h3><ul id="menu-eportfolio" class="menu"><li  class="menu-cirrus-clouds-and-classification menu-item-301"><a href="index.php?page_id=13/#cirrus">Cirrus Clouds and Classification</a></li>
+<li  class="menu-autocorrelation-in-baci-designs menu-item-302"><a href="index.php?page_id=13/#baci">Autocorrelation in BACI Designs</a></li>
+<li  class="menu-fluvial-geostatistical-sdm menu-item-303"><a href="index.php?page_id=13/#geostat">Fluvial Geostatistical SDM</a></li>
+<li  class="menu-flow-path-direction-models menu-item-304"><a href="index.php?page_id=13/#dflow">Flow Path Direction Models</a></li>
+<li  class="menu-multi-species-sdm menu-item-305"><a href="index.php?page_id=13/#community">Multi-species SDM</a></li>
+</ul></div></section><section id="categories-4" class="widget-7 widget widget_categories"><div class="widget-inner"><h3>Categories</h3>		<ul>
+	<li class="cat-item cat-item-2"><a href="http://quanteco.github.io./category/hello/" >Hello</a>
+</li>
+	<li class="cat-item cat-item-3"><a href="http://quanteco.github.io./category/r/" >R</a>
+</li>
+		</ul>
+</div></section><section id="widget_profile-3" class="widget-8 widget-last widget widget_widget_profile"><div class="widget-inner"><h3>Github</h3><div class="wpgithub-profile"><div class="wpgithub-user"><a href="https://github.com/quanteco" title="View quanteco's Github"><img src="http://gravatar.com/avatar/?s=56" alt="View quanteco's Github" /></a><h3 class="wpgithub-username"><a href="https://github.com/quanteco" title="View quanteco's Github">quanteco</a></h3><p class="wpgithub-name">Gregory Anderson</p><p class="wpgithub-location">Blacksburg, VA</p></div><a class="wpgithub-bblock" href="https://github.com/quanteco?tab=repositories"><span class="wpgithub-count">4</span><span class="wpgithub-text">Public Repos</span></a><a class="wpgithub-bblock" href="https://gist.github.com/quanteco"><span class="wpgithub-count">0</span><span class="wpgithub-text">Public Gists</span></a><a class="wpgithub-bblock" href="https://github.com/quanteco/followers"><span class="wpgithub-count">0</span><span class="wpgithub-text">Followers</span></a></div></div></section>              </div><!-- /.sidebar -->
+            </aside><!-- /aside -->
+                    </div><!-- /.row-->
+        </div><!-- /.content -->
+      </div><!-- /.wrap -->
+      <footer id="containerfooter" class="footerclass" role="contentinfo">
+  <div class="container">
+  	<div class="row">
+  								        			        </div>
+        <div class="footercredits clearfix">
+    		
+    		        	<p>&copy; 2016 Gregory B. Anderson. All Rights Reserved.</p>
+    	</div>
+
+  </div>
+
+</footer>
+
+	<div style="display:none">
+	</div>
+
+	<script type="text/javascript">
+		window.WPCOM_sharing_counts = {"http:\/\/gregorybanderson.elementfx.com\/2016\/01\/04\/morans-eigenvector-maps\/":229};
+	</script>
+		<script type="text/javascript">
+			var windowOpen;
+		jQuery(document).on( 'ready post-load', function(){
+			jQuery( 'a.share-twitter' ).on( 'click', function() {
+				if ( 'undefined' !== typeof windowOpen ){ // If there's another sharing window open, close it.
+					windowOpen.close();
+				}
+				windowOpen = window.open( jQuery(this).attr( 'href' ), 'wpcomtwitter', 'menubar=1,resizable=1,width=600,height=350' );
+				return false;
+			});
+		});
+		</script>
+				<script type="text/javascript">
+			var windowOpen;
+		jQuery(document).on( 'ready post-load', function(){
+			jQuery( 'a.share-facebook' ).on( 'click', function() {
+				if ( 'undefined' !== typeof windowOpen ){ // If there's another sharing window open, close it.
+					windowOpen.close();
+				}
+				windowOpen = window.open( jQuery(this).attr( 'href' ), 'wpcomfacebook', 'menubar=1,resizable=1,width=600,height=400' );
+				return false;
+			});
+		});
+		</script>
+				<script type="text/javascript">
+			var windowOpen;
+		jQuery(document).on( 'ready post-load', function(){
+			jQuery( 'a.share-google-plus-1' ).on( 'click', function() {
+				if ( 'undefined' !== typeof windowOpen ){ // If there's another sharing window open, close it.
+					windowOpen.close();
+				}
+				windowOpen = window.open( jQuery(this).attr( 'href' ), 'wpcomgoogle-plus-1', 'menubar=1,resizable=1,width=480,height=550' );
+				return false;
+			});
+		});
+		</script>
+		<script type='text/javascript' src='http://quanteco.github.io./wp-content/plugins/akismet/_inc/form.js?ver=3.1.7'></script>
+<script type='text/javascript' src='http://quanteco.github.io./wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/scripts/shCore.js?ver=3.0.9b'></script>
+<script type='text/javascript' src='http://quanteco.github.io./wp-content/plugins/syntaxhighlighter/third-party-brushes/shBrushR.js?ver=20100919'></script>
+<script type='text/javascript'>
+	(function(){
+		var corecss = document.createElement('link');
+		var themecss = document.createElement('link');
+		var corecssurl = "http://quanteco.github.io./wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/styles/shCore.css?ver=3.0.9b";
+		if ( corecss.setAttribute ) {
+				corecss.setAttribute( "rel", "stylesheet" );
+				corecss.setAttribute( "type", "text/css" );
+				corecss.setAttribute( "href", corecssurl );
+		} else {
+				corecss.rel = "stylesheet";
+				corecss.href = corecssurl;
+		}
+		document.getElementsByTagName("head")[0].insertBefore( corecss, document.getElementById("syntaxhighlighteranchor") );
+		var themecssurl = "http://quanteco.github.io./wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/styles/shThemeDefault.css?ver=3.0.9b";
+		if ( themecss.setAttribute ) {
+				themecss.setAttribute( "rel", "stylesheet" );
+				themecss.setAttribute( "type", "text/css" );
+				themecss.setAttribute( "href", themecssurl );
+		} else {
+				themecss.rel = "stylesheet";
+				themecss.href = themecssurl;
+		}
+		//document.getElementById("syntaxhighlighteranchor").appendChild(themecss);
+		document.getElementsByTagName("head")[0].insertBefore( themecss, document.getElementById("syntaxhighlighteranchor") );
+	})();
+	SyntaxHighlighter.config.strings.expandSource = '+ expand source';
+	SyntaxHighlighter.config.strings.help = '?';
+	SyntaxHighlighter.config.strings.alert = 'SyntaxHighlighter\n\n';
+	SyntaxHighlighter.config.strings.noBrush = 'Can\'t find brush for: ';
+	SyntaxHighlighter.config.strings.brushNotHtmlScript = 'Brush wasn\'t configured for html-script option: ';
+	SyntaxHighlighter.defaults['pad-line-numbers'] = false;
+	SyntaxHighlighter.defaults['toolbar'] = false;
+	SyntaxHighlighter.all();
+</script>
+<script type='text/javascript' src='http://quanteco.github.io./wp-content/plugins/resume-builder/js/jquery.raty.js?ver=1.0'></script>
+<script type='text/javascript' src='http://quanteco.github.io./wp-content/plugins/resume-builder/js/functions.js?ver=1.0'></script>
+<script type='text/javascript' src='http://quanteco.github.io./wp-content/plugins/jetpack/modules/photon/photon.js?ver=20130122'></script>
+<script type='text/javascript' src='http://s0.wp.com/wp-content/js/devicepx-jetpack.js?ver=201613'></script>
+<script type='text/javascript' src='http://s.gravatar.com/js/gprofiles.js?ver=2016Apraa'></script>
+<script type='text/javascript'>
+/* <![CDATA[ */
+var WPGroHo = {"my_hash":""};
+/* ]]> */
+</script>
+<script type='text/javascript' src='http://quanteco.github.io./wp-content/plugins/jetpack/modules/wpgroho.js?ver=4.4.2'></script>
+<script type='text/javascript' src='http://quanteco.github.io./wp-includes/js/comment-reply.min.js?ver=4.4.2'></script>
+<script type='text/javascript' src='http://quanteco.github.io./wp-includes/js/masonry.min.js?ver=3.1.2'></script>
+<script type='text/javascript' src='http://quanteco.github.io./wp-content/themes/virtue/assets/js/min/plugins-min.js?ver=262'></script>
+<script type='text/javascript' src='http://quanteco.github.io./wp-content/themes/virtue/assets/js/main.js?ver=262'></script>
+<script type='text/javascript' src='http://quanteco.github.io./wp-includes/js/wp-embed.min.js?ver=4.4.2'></script>
+<script type='text/javascript'>
+/* <![CDATA[ */
+var sharing_js_options = {"lang":"en","counts":"1"};
+/* ]]> */
+</script>
+<script type='text/javascript' src='http://quanteco.github.io./wp-content/plugins/jetpack/modules/sharedaddy/sharing.js?ver=3.8.2'></script>
+<script type='text/javascript' src='http://stats.wp.com/e-201613.js' async defer></script>
+<script type='text/javascript'>
+	_stq = window._stq || [];
+	_stq.push([ 'view', {v:'ext',j:'1:3.8.2',blog:'104885985',post:'229',tz:'0',srv:'gregorybanderson.elementfx.com'} ]);
+	_stq.push([ 'clickTrackerInit', '104885985', '229' ]);
+</script>
+    </div><!--Wrapper-->
+  </body>
+</html>
