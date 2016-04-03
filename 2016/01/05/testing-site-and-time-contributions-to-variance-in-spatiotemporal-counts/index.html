@@ -1,0 +1,644 @@
+<!DOCTYPE html>
+<!--[if lt IE 7]>      <html class="no-js lt-ie9 lt-ie8 lt-ie7" lang="en-US" prefix="og: http://ogp.me/ns#"> <![endif]-->
+<!--[if IE 7]>         <html class="no-js lt-ie9 lt-ie8" lang="en-US" prefix="og: http://ogp.me/ns#"> <![endif]-->
+<!--[if IE 8]>         <html class="no-js lt-ie9" lang="en-US" prefix="og: http://ogp.me/ns#"> <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en-US" prefix="og: http://ogp.me/ns#"> <!--<![endif]-->
+<head>
+<base href="http://quanteco.github.io." />
+
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <title>Testing Site and Time Contributions to Variance in Spatiotemporal Counts -</title>
+
+<!-- This site is optimized with the Yoast SEO plugin v3.0.7 - https://yoast.com/wordpress/plugins/seo/ -->
+<link rel="canonical" href="http://quanteco.github.io./2016/01/05/testing-site-and-time-contributions-to-variance-in-spatiotemporal-counts/" />
+<meta property="og:locale" content="en_US" />
+<meta property="og:type" content="article" />
+<meta property="og:title" content="Testing Site and Time Contributions to Variance in Spatiotemporal Counts -" />
+<meta property="og:description" content="I recently had the privilege of attending a seminar by Pierre Legendre in the College of Natural Resources at Virginia Tech. His talk was on partitioning beta diversity (i.e., species turnover) into site (local) and species contributions, and how Monte-Carlo &hellip; Continued" />
+<meta property="og:url" content="http://quanteco.github.io./2016/01/05/testing-site-and-time-contributions-to-variance-in-spatiotemporal-counts/" />
+<meta property="article:section" content="R" />
+<meta property="article:published_time" content="2016-01-05T12:00:47+00:00" />
+<meta property="article:modified_time" content="2016-01-14T15:09:24+00:00" />
+<meta property="og:updated_time" content="2016-01-14T15:09:24+00:00" />
+<meta property="og:image" content="http://quanteco.github.io./wp-content/uploads/2015/01/propvar.png" />
+<meta name="twitter:card" content="summary"/>
+<meta name="twitter:description" content="I recently had the privilege of attending a seminar by Pierre Legendre in the College of Natural Resources at Virginia Tech. His talk was on partitioning beta diversity (i.e., species turnover) into site (local) and species contributions, and how Monte-Carlo &hellip; Continued"/>
+<meta name="twitter:title" content="Testing Site and Time Contributions to Variance in Spatiotemporal Counts -"/>
+<meta name="twitter:image" content="http://i1.wp.com/gregorybanderson.elementfx.com/wp-content/uploads/2015/01/propvar.png?fit=600%2C600"/>
+<!-- / Yoast SEO plugin. -->
+
+
+
+
+		<script type="text/javascript">
+			window._wpemojiSettings = {"baseUrl":"https:\/\/s.w.org\/images\/core\/emoji\/72x72\/","ext":".png","source":{"concatemoji":"http:\/\/gregorybanderson.elementfx.com\/wp-includes\/js\/wp-emoji-release.min.js?ver=4.4.2"}};
+			!function(a,b,c){function d(a){var c,d=b.createElement("canvas"),e=d.getContext&&d.getContext("2d"),f=String.fromCharCode;return e&&e.fillText?(e.textBaseline="top",e.font="600 32px Arial","flag"===a?(e.fillText(f(55356,56806,55356,56826),0,0),d.toDataURL().length>3e3):"diversity"===a?(e.fillText(f(55356,57221),0,0),c=e.getImageData(16,16,1,1).data.toString(),e.fillText(f(55356,57221,55356,57343),0,0),c!==e.getImageData(16,16,1,1).data.toString()):("simple"===a?e.fillText(f(55357,56835),0,0):e.fillText(f(55356,57135),0,0),0!==e.getImageData(16,16,1,1).data[0])):!1}function e(a){var c=b.createElement("script");c.src=a,c.type="text/javascript",b.getElementsByTagName("head")[0].appendChild(c)}var f,g;c.supports={simple:d("simple"),flag:d("flag"),unicode8:d("unicode8"),diversity:d("diversity")},c.DOMReady=!1,c.readyCallback=function(){c.DOMReady=!0},c.supports.simple&&c.supports.flag&&c.supports.unicode8&&c.supports.diversity||(g=function(){c.readyCallback()},b.addEventListener?(b.addEventListener("DOMContentLoaded",g,!1),a.addEventListener("load",g,!1)):(a.attachEvent("onload",g),b.attachEvent("onreadystatechange",function(){"complete"===b.readyState&&c.readyCallback()})),f=c.source||{},f.concatemoji?e(f.concatemoji):f.wpemoji&&f.twemoji&&(e(f.twemoji),e(f.wpemoji)))}(window,document,window._wpemojiSettings);
+		</script>
+		<style type="text/css">
+img.wp-smiley,
+img.emoji {
+	display: inline !important;
+	border: none !important;
+	box-shadow: none !important;
+	height: 1em !important;
+	width: 1em !important;
+	margin: 0 .07em !important;
+	vertical-align: -0.1em !important;
+	background: none !important;
+	padding: 0 !important;
+}
+</style>
+<link rel='stylesheet' id='rb-font-awesome-css'  href='//maxcdn.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.min.css?ver=4.4.0' type='text/css' media='all' />
+<link rel='stylesheet' id='rb-styles-css'  href='http://quanteco.github.io./wp-content/plugins/resume-builder/css/resume-builder-styles.css?ver=4.4.2' type='text/css' media='all' />
+<link rel='stylesheet' id='easy_table_style-css'  href='http://quanteco.github.io./wp-content/plugins/easy-table/themes/default/style.css?ver=1.5.3' type='text/css' media='all' />
+<link rel='stylesheet' id='wp-github-css'  href='http://quanteco.github.io./wp-content/plugins/wp-github/css/wp-github.css?ver=4.4.2' type='text/css' media='all' />
+<link rel='stylesheet' id='kadence_theme-css'  href='http://quanteco.github.io./wp-content/themes/virtue/assets/css/virtue.css?ver=262' type='text/css' media='all' />
+<link rel='stylesheet' id='virtue_skin-css'  href='http://quanteco.github.io./wp-content/themes/virtue/assets/css/skins/default.css' type='text/css' media='all' />
+<link rel='stylesheet' id='redux-google-fonts-virtue-css'  href='http://fonts.googleapis.com/css?family=Lato%3A400&#038;ver=1452092672' type='text/css' media='all' />
+<link rel='stylesheet' id='genericons-css'  href='http://quanteco.github.io./wp-content/plugins/jetpack/_inc/genericons/genericons/genericons.css?ver=3.1' type='text/css' media='all' />
+<link rel='stylesheet' id='jetpack_css-css'  href='http://quanteco.github.io./wp-content/plugins/jetpack/css/jetpack.css?ver=3.8.2' type='text/css' media='all' />
+<script type='text/javascript' src='http://quanteco.github.io./wp-includes/js/jquery/jquery.js?ver=1.11.3'></script>
+<script type='text/javascript' src='http://quanteco.github.io./wp-includes/js/jquery/jquery-migrate.min.js?ver=1.2.1'></script>
+<script type='text/javascript' src='http://quanteco.github.io./wp-content/plugins/jetpack/modules/related-posts/related-posts.js?ver=20150408'></script>
+<script type='text/javascript' src='http://quanteco.github.io./wp-content/plugins/file-away/lib/js/alphanum.js?ver=1.0'></script>
+<script type='text/javascript' src='http://quanteco.github.io./wp-content/plugins/file-away/lib/js/chosen/chosen.js?ver=1.1.0'></script>
+<script type='text/javascript' src='http://quanteco.github.io./wp-content/plugins/file-away/lib/js/context/contextmenu.js?ver=3.9.6.1'></script>
+<script type='text/javascript' src='http://quanteco.github.io./wp-content/plugins/file-away/lib/js/footable.js?ver=2.0.1.2'></script>
+<script type='text/javascript' src='http://quanteco.github.io./wp-content/plugins/file-away/lib/js/filertify.js?ver=0.3.11'></script>
+<script type='text/javascript' src='http://quanteco.github.io./wp-content/plugins/file-away/lib/js/soundmanager2.js?ver=2.97a.20130101'></script>
+<script type='text/javascript'>
+/* <![CDATA[ */
+var fileaway_mgmt = {"ajaxurl":"http:\/\/gregorybanderson.elementfx.com\/wp-admin\/admin-ajax.php","nonce":"a3724cfb43","device":"desktop","no_results":"Nothing found.","cancel_link":"Cancel","save_link":"Save","proceed_link":"Proceed","delete_check":"Delete?","ok_label":"OK","confirm_label":"I'm Sure","cancel_label":"Nevermind","file_singular":"file","file_plural":"files","delete_confirm":"You are about to permanently delete numfiles. Are you sure you're OK with that?","tamper1":"Sorry, there was a problem verifying the correct path to the files.","tamper2":"There was an error completing your request. The path to the directory has not been properly defined.","tamper3":"Sorry, but the name you specified cannot be processed.","tamper4":"An error has been triggered.","no_files_selected":"No files have been selected. Click on the table rows of the files you wish to select.","no_files_chosen":"No files have been chosen.","no_action":"No action has been selected.","no_destination":"No destination directory has been selected.","no_subdir_name":"You did not specify a name for your sub-directory.","unreadable_file":"Sorry, a file you have specified could not be read.","build_path":"Please build the path to your destination directory.","no_upload_support":"Your browser does not support the File Upload API. Please update.","exceeds_size":"This file exceeds the prettymax max file size.","type_not_permitted":"This file type is not permitted.","view_all_permitted":"View all permitted file types.","view_all_prohibited":"View all prohibited file types.","double_dots_override":"You may not use double dots or attempt to override the upload directory.","double_dots":"You may not use double dots in the filename.","creation_disabled":"Sub-directory creation is disabled.","no_override":"You may not attempt to override the upload directory.","multi_type":"You may not specify a script filetype prior to a non-script filetype.","upload_failure":"Sorry about that, but filename could not be uploaded.","rename_column":"Rename Column","delete_column":"Delete Column","insert_col_before":"Insert New Column Before","insert_col_after":"Insert New Column After","insert_row":"Insert New Row","delete_row":"Delete Row","save_backup":"Save Backup","new_column_name":"New Column Name","atleast_one_column":"There must be at least one column at all times.","atleast_one_row":"There must be at least one row at all times.","next_label":"Next","create_label":"Create","new_file_name":"New File Name","specify_file_name":"You must specify a file name.","specify_column_name":"You must specify at least one column name.","column_names":"Column Names, Comma-separated"};
+/* ]]> */
+</script>
+<script type='text/javascript' src='http://quanteco.github.io./wp-content/plugins/file-away/lib/js/management.js?ver=3.9.6.1'></script>
+<script type='text/javascript'>
+/* <![CDATA[ */
+var fileaway_stats = {"ajaxurl":"http:\/\/gregorybanderson.elementfx.com\/wp-admin\/admin-ajax.php","nonce":"df9230aaac"};
+/* ]]> */
+</script>
+<script type='text/javascript' src='http://quanteco.github.io./wp-content/plugins/file-away/lib/js/stats.js?ver=3.9.6.1'></script>
+<script type='text/javascript' src='http://quanteco.github.io./wp-content/themes/virtue/assets/js/vendor/modernizr.min.js'></script>
+<link rel='https://api.w.org/' href='http://quanteco.github.io./wp-json/' />
+
+ 
+
+<link rel='shortlink' href='http://wp.me/p765Dr-1g' />
+
+
+<script> var fileaway_filetype_groups = {'adobe' : ['abf', 'aep', 'afm', 'ai', 'as', 'eps', 'fla', 'flv', 'fm', 'indd', 'pdd', 'pdf', 'pmd', 'ppj', 'prc', 'ps', 'psb', 'psd', 'swf'], 'application' : ['bat', 'dll', 'exe', 'msi'], 'audio' : ['aac', 'aif', 'aifc', 'aiff', 'amr', 'ape', 'au', 'bwf', 'flac', 'iff', 'gsm', 'la', 'm4a', 'm4b', 'm4p', 'mid', 'mp2', 'mp3', 'mpc', 'ogg', 'ots', 'ram', 'raw', 'rex', 'rx2', 'spx', 'swa', 'tta', 'vox', 'wav', 'wma', 'wv'], 'compression' : ['7z', 'a', 'ace', 'afa', 'ar', 'bz2', 'cab', 'cfs', 'cpio', 'cpt', 'dar', 'dd', 'dmg', 'gz', 'lz', 'lzma', 'lzo', 'mar', 'rar', 'rz', 's7z', 'sda', 'sfark', 'shar', 'tar', 'tgz', 'xz', 'z', 'zip', 'zipx', 'zz'], 'css' : ['css', 'less', 'sass', 'scss'], 'image' : ['bmp', 'dds', 'exif', 'gif', 'hdp', 'hdr', 'iff', 'jfif', 'jpeg', 'jpg', 'jxr', 'pam', 'pbm', 'pfm', 'pgm', 'png', 'pnm', 'ppm', 'raw', 'rgbe', 'tga', 'thm', 'tif', 'tiff', 'webp', 'wdp', 'yuv'], 'msdoc' : ['doc', 'docm', 'docx', 'dot', 'dotx'], 'msexcel' : ['xls', 'xlsm', 'xlsb', 'xlsx', 'xlt', 'xltm', 'xltx', 'xlw'], 'openoffice' : ['dbf', 'dbf4', 'odp', 'ods', 'odt', 'stc', 'sti', 'stw', 'sxc', 'sxi', 'sxw'], 'powerpoint' : ['pot', 'potm', 'potx', 'pps', 'ppt', 'pptm', 'pptx', 'pub'], 'script' : ['asp', 'cfm', 'cgi', 'clas', 'class', 'cpp', 'htm', 'html', 'java', 'js', 'php', 'pl', 'py', 'rb', 'shtm', 'shtml', 'xhtm', 'xhtml', 'xml', 'yml'], 'text' : ['123', 'csv', 'log', 'psw', 'rtf', 'sql', 'txt', 'uof', 'uot', 'wk1', 'wks', 'wpd', 'wps'], 'video' : ['avi', 'divx', 'mov', 'm4p', 'm4v', 'mkv', 'mp4', 'mpeg', 'mpg', 'ogv', 'qt', 'rm', 'rmvb', 'vob', 'webm', 'wmv']}; var ssfa_filetype_icons = {'adobe' : '&#x21;', 'application' : '&#x54;', 'audio' : '&#x43;', 'compression' : '&#x27;', 'css' : '&#x28;', 'image' : '&#x31;', 'msdoc' : '&#x23;', 'msexcel' : '&#x24;', 'openoffice' : '&#x22;', 'powerpoint' : '&#x26;', 'script' : '&#x25;', 'text' : '&#x2e;', 'video' : '&#x57;', 'unknown' : '&#x29;'} </script>
+<link rel='dns-prefetch' href='//i0.wp.com'>
+<link rel='dns-prefetch' href='//i1.wp.com'>
+<link rel='dns-prefetch' href='//i2.wp.com'>
+<style type='text/css'>img#wpstats{display:none}</style><style type="text/css">#logo {padding-top:0px;}#logo {padding-bottom:0px;}#logo {margin-left:0px;}#logo {margin-right:0px;}#nav-main {margin-top:0px;}#nav-main {margin-bottom:0px;}.headerfont, .tp-caption {font-family:'Palatino Linotype', 'Book Antiqua', Palatino, serif;} 
+  .topbarmenu ul li {font-family:Lato;}
+  #kadbreadcrumbs {font-family:'MS Serif', 'New York', sans-serif;}input[type=number]::-webkit-inner-spin-button, input[type=number]::-webkit-outer-spin-button { -webkit-appearance: none; margin: 0; } input[type=number] {-moz-appearance: textfield;}.quantity input::-webkit-outer-spin-button,.quantity input::-webkit-inner-spin-button {display: none;}.product_item .product_details h5 {text-transform: none;}.product_item .product_details h5 {min-height:40px;}</style><!--[if lt IE 9]>
+<script src="http://quanteco.github.io./wp-content/themes/virtue/assets/js/vendor/respond.min.js"></script>
+<![endif]-->
+<style type="text/css" id="syntaxhighlighteranchor"></style>
+<link rel="icon" href="http://i0.wp.com/gregorybanderson.elementfx.com/wp-content/uploads/2015/01/cropped-iconga-54b80e4ev1_site_icon.png?fit=32%2C32" sizes="32x32" />
+<link rel="icon" href="http://i0.wp.com/gregorybanderson.elementfx.com/wp-content/uploads/2015/01/cropped-iconga-54b80e4ev1_site_icon.png?fit=192%2C192" sizes="192x192" />
+<link rel="apple-touch-icon-precomposed" href="http://i0.wp.com/gregorybanderson.elementfx.com/wp-content/uploads/2015/01/cropped-iconga-54b80e4ev1_site_icon.png?fit=180%2C180" />
+<meta name="msapplication-TileImage" content="http://i0.wp.com/gregorybanderson.elementfx.com/wp-content/uploads/2015/01/cropped-iconga-54b80e4ev1_site_icon.png?fit=270%2C270" />
+<style type="text/css" title="dynamic-css" class="options-output">header #logo a.brand,.logofont{font-family:Lato;line-height:40px;font-weight:400;font-style:normal;font-size:32px;}.kad_tagline{font-family:Lato;line-height:20px;font-weight:400;font-style:normal;color:#444444;font-size:14px;}.product_item .product_details h5{font-family:Lato;line-height:20px;font-weight:normal;font-style:700;font-size:16px;}h1{font-family:'Palatino Linotype', 'Book Antiqua', Palatino, serif;line-height:40px;font-weight:400;font-style:normal;font-size:38px;}h2{font-family:'Bookman Old Style', serif;line-height:40px;font-weight:normal;font-style:normal;font-size:32px;}h3{font-family:'Bookman Old Style', serif;line-height:30px;font-weight:400;font-style:normal;font-size:24px;}h4{font-family:'Bookman Old Style', serif;line-height:25px;font-weight:400;font-style:normal;font-size:20px;}h5{font-family:'Bookman Old Style', serif;line-height:24px;font-weight:700;font-style:normal;font-size:18px;}body{font-family:'MS Serif', 'New York', sans-serif;line-height:20px;font-weight:400;font-style:normal;font-size:14px;}#nav-main ul.sf-menu a{font-family:Lato;line-height:18px;font-weight:400;font-style:normal;font-size:12px;}#nav-second ul.sf-menu a{font-family:Lato;line-height:22px;font-weight:400;font-style:normal;font-size:18px;}.kad-nav-inner .kad-mnav, .kad-mobile-nav .kad-nav-inner li a,.nav-trigger-case{font-family:Lato;line-height:20px;font-weight:400;font-style:normal;font-size:16px;}</style></head>
+  <body class="single single-post postid-78 single-format-standard wide testing-site-and-time-contributions-to-variance-in-spatiotemporal-counts">
+    <div id="wrapper" class="container">
+    <div id="kt-skip-link"><a href="#content">Skip to Main Content</a></div><header class="banner headerclass" role="banner">
+  <section id="topbar" class="topclass">
+    <div class="container">
+      <div class="row">
+        <div class="col-md-6 col-sm-6 kad-topbar-left">
+          <div class="topbarmenu clearfix">
+          <ul id="menu-site-links" class="sf-menu"><li  class="menu-home menu-item-297"><a href="http://quanteco.github.io./">Home</a></li>
+<li  class="menu-research menu-item-296"><a href="http://quanteco.github.io./research/">Research</a></li>
+<li  class="menu-eportfolio menu-item-295"><a href="http://quanteco.github.io./eportfolio/">ePortfolio</a></li>
+<li  class="menu-blog-on-quantitative-ecology current_page_parent menu-item-323"><a href="http://quanteco.github.io./blog-on-quantitative-ecology/">Blog on Quantitative Ecology</a></li>
+<li  class="menu-curriculum-vitae menu-item-325"><a href="http://quanteco.github.io./curriculum-vitae/">Curriculum Vitae</a></li>
+<li  class="menu-contact menu-item-324"><a href="http://quanteco.github.io./contact/">Contact</a></li>
+</ul>                                  </div>
+        </div><!-- close col-md-6 --> 
+        <div class="col-md-6 col-sm-6 kad-topbar-right">
+          <div id="topbar-search" class="topbar-widget">
+            <form role="search" method="get" id="searchform" class="form-search" action="http://quanteco.github.io./">
+  <label class="hide" for="s">Search for:</label>
+  <input type="text" value="" name="s" id="s" class="search-query" placeholder="Search">
+  <button type="submit" id="searchsubmit" class="search-icon"><i class="icon-search"></i></button>
+</form>        </div>
+        </div> <!-- close col-md-6-->
+      </div> <!-- Close Row -->
+    </div> <!-- Close Container -->
+  </section>
+  <div class="container">
+    <div class="row">
+          <div class="col-md-4 clearfix kad-header-left">
+            <div id="logo" class="logocase">
+              <a class="brand logofont" href="http://quanteco.github.io./">
+                              </a>
+                         </div> <!-- Close #logo -->
+       </div><!-- close logo span -->
+              
+    </div> <!-- Close Row -->
+     
+  </div> <!-- Close Container -->
+   
+     </header>      <div class="wrap contentclass" role="document">
+
+          <div id="content" class="container">
+    <div class="row single-article" itemscope="" itemtype="http://schema.org/BlogPosting">
+      <div class="main col-lg-9 col-md-8" role="main">
+                  <article class="post-78 post type-post status-publish format-standard has-post-thumbnail hentry category-r">
+                                  <div class="imghoverclass postfeat post-single-img" itemprop="image">
+                        <a href="http://quanteco.github.io./wp-content/uploads/2015/01/propvar.png" data-rel="lightbox" class="lightboxhover">
+                          <img src="http://i1.wp.com/gregorybanderson.elementfx.com/wp-content/uploads/2015/01/propvar.png?resize=600%2C600" itemprop="image" alt="Testing Site and Time Contributions to Variance in Spatiotemporal Counts" />
+                        </a>
+                      </div>
+                                <div class="postmeta updated">
+      <div class="postdate bg-lightgray headerfont" itemprop="datePublished">
+      <span class="postday">5</span>
+      Jan 2016    </div>
+</div> 
+    <header>
+      <h1 class="entry-title" itemprop="name headline">Testing Site and Time Contributions to Variance in Spatiotemporal Counts</h1>
+      <div class="subhead">
+    <span class="postauthortop author vcard">
+    <i class="icon-user"></i> by  <span itemprop="author"><a href="http://quanteco.github.io./author/quanteco/" class="fn" rel="author">quanteco</a></span> |</span>
+      
+    <span class="postedintop"><i class="icon-folder-open"></i> posted in: <a href="http://quanteco.github.io./category/r/" rel="category tag">R</a></span>     <span class="kad-hidepostedin">|</span>
+    <span class="postcommentscount">
+    <i class="icon-comments-alt"></i> 1    </span>
+</div>  
+    </header>
+    <div class="entry-content" itemprop="description articleBody">
+      <p>I recently had the privilege of attending a seminar by <a href="http://adn.biol.umontreal.ca/~numericalecology/indexEn.html" target="_blank">Pierre Legendre </a>in the <a href="http://cnre.vt.edu/" target="_blank">College of Natural Resources</a> at <a href="http://www.vt.edu/" target="_blank">Virginia Tech</a>. <a href="http://onlinelibrary.wiley.com/doi/10.1111/ele.12141/full" target="_blank">His talk</a> was on partitioning <a href="http://en.wikipedia.org/wiki/Beta_diversity" target="_blank">beta diversity</a> (i.e., species turnover) into site (local) and species contributions, and how Monte-Carlo tests can be used to find significant contributors. After watching his presentation, I realized that the framework presented (i.e., partitioning the variance of a matrix) was applicable to other situations as well. In particular, it is possible to use the partitioning to test for significant site and time contributions in spatiotemporal counts of a species. In this post, I demonstrate how to calculate the variance of a matrix of spatiotemporal counts (with homage to <a href="http://onlinelibrary.wiley.com/doi/10.1111/ele.12141/full" target="_blank">Pierre and De Cáceres 2013</a>) and partition the variance into time and site contributions. Furthermore, I develop a suite of R functions to perform these calculations and test for significance using Monte-Carlo tests.</p>
+<h3>Background Info (Calculating <img src="//s0.wp.com/latex.php?latex=%5Cmathbf%7BBD%7D_%7BTotal%7D+%2C+%5Cmathbf%7BSCBD%7D&#038;bg=ffffff&#038;fg=000&#038;s=0" alt="&#92;mathbf{BD}_{Total} , &#92;mathbf{SCBD}" title="&#92;mathbf{BD}_{Total} , &#92;mathbf{SCBD}" class="latex" /> and <img src="//s0.wp.com/latex.php?latex=%5Cmathbf%7BLCBD%7D&#038;bg=ffffff&#038;fg=000&#038;s=0" alt="&#92;mathbf{LCBD}" title="&#92;mathbf{LCBD}" class="latex" />)</h3>
+<p>In short, <a href="http://onlinelibrary.wiley.com/doi/10.1111/ele.12141/full" target="_blank">Legendre and De Cáceres (2013)</a> suggest that the variance in a site <img src="//s0.wp.com/latex.php?latex=%5Ctimes+&#038;bg=ffffff&#038;fg=000&#038;s=0" alt="&#92;times " title="&#92;times " class="latex" /> species matrix (<img src="//s0.wp.com/latex.php?latex=%5Cmathbf%7BY%7D&#038;bg=ffffff&#038;fg=000&#038;s=0" alt="&#92;mathbf{Y}" title="&#92;mathbf{Y}" class="latex" />) is a metric of total beta diversity, and can be calculated by defining a <img src="//s0.wp.com/latex.php?latex=n&#038;bg=ffffff&#038;fg=000&#038;s=0" alt="n" title="n" class="latex" /> (sites) <img src="//s0.wp.com/latex.php?latex=%5Ctimes+p&#038;bg=ffffff&#038;fg=000&#038;s=0" alt="&#92;times p" title="&#92;times p" class="latex" /> (species) squared difference matrix (<img src="//s0.wp.com/latex.php?latex=%5Cmathbf%7BS%7D&#038;bg=ffffff&#038;fg=000&#038;s=0" alt="&#92;mathbf{S}" title="&#92;mathbf{S}" class="latex" />) and calculating the total sum of squares as follows:</p>
+<p style="text-align: center;"><img src="//s0.wp.com/latex.php?latex=%5Cmathbf%7BSS%7D_%7BTotal%7D%3D%5Csum_%7Bi%3D1%7D%5En+%5Csum_%7Bj%3D1%7D%5Ep+s_%7Bij%7D+&#038;bg=ffffff&#038;fg=000&#038;s=2" alt="&#92;mathbf{SS}_{Total}=&#92;sum_{i=1}^n &#92;sum_{j=1}^p s_{ij} " title="&#92;mathbf{SS}_{Total}=&#92;sum_{i=1}^n &#92;sum_{j=1}^p s_{ij} " class="latex" />,</p>
+<p style="text-align: left;">where</p>
+<p style="text-align: center;"><img src="//s0.wp.com/latex.php?latex=s_%7Bij%7D%3D%28y_%7Bij%7D-%5Cbar%7By_j%7D%29%5E2+&#038;bg=ffffff&#038;fg=000&#038;s=2" alt="s_{ij}=(y_{ij}-&#92;bar{y_j})^2 " title="s_{ij}=(y_{ij}-&#92;bar{y_j})^2 " class="latex" />,</p>
+<p style="text-align: left;">and <img src="//s0.wp.com/latex.php?latex=i&#038;bg=ffffff&#038;fg=000&#038;s=0" alt="i" title="i" class="latex" /> and <img src="//s0.wp.com/latex.php?latex=j&#038;bg=ffffff&#038;fg=000&#038;s=0" alt="j" title="j" class="latex" /> index the sites and species, respectively. I should also note that in the above, <img src="//s0.wp.com/latex.php?latex=%5Cmathbf%7BY%7D&#038;bg=ffffff&#038;fg=000&#038;s=0" alt="&#92;mathbf{Y}" title="&#92;mathbf{Y}" class="latex" />, is a abundance matrix that has been subjected to a Hellinger or chord transformation. Beta diversity (<img src="//s0.wp.com/latex.php?latex=%5Cmathbf%7BBD%7D_%7BTotal%7D&#038;bg=ffffff&#038;fg=000&#038;s=0" alt="&#92;mathbf{BD}_{Total}" title="&#92;mathbf{BD}_{Total}" class="latex" />) can then be calculated as:</p>
+<p style="text-align: center;"><img src="//s0.wp.com/latex.php?latex=%5Cmathbf%7BBD%7D_%7BTotal%7D+%3D+%5Cmathbf%7BVar%28Y%29%7D%3D+%5Cmathbf%7BSS%7D_%7BTotal%7D%2F%28n-1%29+&#038;bg=ffffff&#038;fg=000&#038;s=2" alt="&#92;mathbf{BD}_{Total} = &#92;mathbf{Var(Y)}= &#92;mathbf{SS}_{Total}/(n-1) " title="&#92;mathbf{BD}_{Total} = &#92;mathbf{Var(Y)}= &#92;mathbf{SS}_{Total}/(n-1) " class="latex" />.</p>
+<p style="text-align: left;">Although there have been plenty of proposed ways to calculate beta diversity, this way provides an opportunity to calculate two further metrics: (1) the species contribution to beta diversity (SCBD) and (2) the local contribution to beta diversity (LCBD). These are simply the column and row sums of the squared difference matrix divided by the sum of the squared difference matrix. Therefore, we can calculate SCBD as</p>
+<p style="text-align: center;"><img src="//s0.wp.com/latex.php?latex=%5Cmathbf%7BSCBD%7D_j+%3D+%5Cfrac%7B%5Csum_%7Bi%3D1%7D%5En+s_%7Bij%7D%7D%7B%5Cmathbf%7BSS%7D_%7BTotal%7D%7D+&#038;bg=ffffff&#038;fg=000&#038;s=2" alt="&#92;mathbf{SCBD}_j = &#92;frac{&#92;sum_{i=1}^n s_{ij}}{&#92;mathbf{SS}_{Total}} " title="&#92;mathbf{SCBD}_j = &#92;frac{&#92;sum_{i=1}^n s_{ij}}{&#92;mathbf{SS}_{Total}} " class="latex" />.</p>
+<p style="text-align: left;">Likewise, we can calculate LCBD as:</p>
+<p style="text-align: center;"><img src="//s0.wp.com/latex.php?latex=%5Cmathbf%7BLCBD%7D_i+%3D+%5Cfrac%7B%5Csum_%7Bj%3D1%7D%5En+s_%7Bij%7D%7D%7B%5Cmathbf%7BSS%7D_%7BTotal%7D%7D+&#038;bg=ffffff&#038;fg=000&#038;s=2" alt="&#92;mathbf{LCBD}_i = &#92;frac{&#92;sum_{j=1}^n s_{ij}}{&#92;mathbf{SS}_{Total}} " title="&#92;mathbf{LCBD}_i = &#92;frac{&#92;sum_{j=1}^n s_{ij}}{&#92;mathbf{SS}_{Total}} " class="latex" />.</p>
+<h3 style="text-align: left;">Applying These Concepts to Other Matrices</h3>
+<p>Calculating the variance of the matrix in the way described above has other uses as well. One that I am particularly drawn to is the analysis of spatiotemporal counts of a species. If we define <img src="//s0.wp.com/latex.php?latex=%5Cmathbf%7BY%7D&#038;bg=ffffff&#038;fg=000&#038;s=0" alt="&#92;mathbf{Y}" title="&#92;mathbf{Y}" class="latex" /> to be a <img src="//s0.wp.com/latex.php?latex=n+%5Ctimes+p&#038;bg=ffffff&#038;fg=000&#038;s=0" alt="n &#92;times p" title="n &#92;times p" class="latex" /> transformed abundance matrix of sample occasions (<img src="//s0.wp.com/latex.php?latex=n&#038;bg=ffffff&#038;fg=000&#038;s=0" alt="n" title="n" class="latex" />) and sample sites (<img src="//s0.wp.com/latex.php?latex=p&#038;bg=ffffff&#038;fg=000&#038;s=0" alt="p" title="p" class="latex" />), we can use the formulas above to calculate: (1) the variance of <img src="//s0.wp.com/latex.php?latex=%5Cmathbf%7BY%7D&#038;bg=ffffff&#038;fg=000&#038;s=0" alt="&#92;mathbf{Y}" title="&#92;mathbf{Y}" class="latex" /> (a metric of spatiotemporal variability) and (2) site and time contributions to this variability. The benefit here is that we can create a simple test to find time and/or sites that contribute significantly to the variation in counts of a species over time and/or space.</p>
+<h3>Calculating Spatiotemporal Variation and Contributions in R</h3>
+<p>If you have read any of my other blog posts, you would know that I prefer to develop R functions that are generic in order to perform tasks in R. Therefore, most of the remainder of this blog post will focus on building two functions. The first will calculate spatiotemporal variation (i.e., <img src="//s0.wp.com/latex.php?latex=%5Cmathbf%7BVar%28Y%29%7D&#038;bg=ffffff&#038;fg=000&#038;s=0" alt="&#92;mathbf{Var(Y)}" title="&#92;mathbf{Var(Y)}" class="latex" />), temporal contributions to variation, and spatial contributions to variation. Later, we will develop a Monte-Carlo procedure to test whether these contributions are significantly greater than expected by chance. If you are uninterested in how these functions are programmed in R, feel free to skip ahead to the example application below.</p>
+<p>Our first step to creating the function is to define the arguments of the function:</p>
+<ul>
+<li><strong>Y</strong> a time by site matrix of abudances</li>
+<li><strong>trans</strong> a string determining the transformation used on Y; implemented options will include: &#8216;chord&#8217; (default) and &#8216;hellinger&#8217;</li>
+<li><strong>print.results</strong> a logical result to print results (default) or be silent</li>
+<li><strong>&#8230; </strong></li>
+</ul>
+<p>The last argument (ellipses) provides a way for us to pass other arguments to the embed functions within the function we are creating. I designated them with one purpose in mind: NAs! Not to be a spoiler, but our function will have a lot of sums, colSums, rowSums, rowMeans, and colMeans functions within it. Each of these functions accepts an argument for the removal of NAs (i.e., na.rm). While we could include na.rm as an argument within our function, I prefer to use the ellipses (&#8230;) instead.</p>
+<p>With these defined we can define the function itself in R:</p>
+<pre class="brush: r; light: true; title: ; notranslate" title="">
+stvariance&amp;lt;-function(Y,trans=c(&quot;chord&quot;,&quot;hellinger&quot;),print.results=T,...){
+</pre>
+<p>The first thing to do is to apply the selected (or default) transformation on the matrix of abundances.</p>
+<p>The chord transformation is simply:</p>
+<p style="text-align: center;"><img src="//s0.wp.com/latex.php?latex=y%27_%7Bij%7D%3Dy_%7Bij%7D%2F%5Csqrt%7B%5Csum_%7Bj%3D1%7D%5Ep+y_%7Bij%7D%5E2%7D+&#038;bg=ffffff&#038;fg=000&#038;s=2" alt="y&#039;_{ij}=y_{ij}/&#92;sqrt{&#92;sum_{j=1}^p y_{ij}^2} " title="y&#039;_{ij}=y_{ij}/&#92;sqrt{&#92;sum_{j=1}^p y_{ij}^2} " class="latex" />,</p>
+<p style="text-align: left;">and the Hellinger transformation is:</p>
+<p style="text-align: center;"><img src="//s0.wp.com/latex.php?latex=y%27_%7Bij%7D%3D%5Csqrt%7By_%7Bij%7D%2F%5Csum_%7Bj%3D1%7D%5Ep+y_%7Bij%7D%7D+&#038;bg=ffffff&#038;fg=000&#038;s=2" alt="y&#039;_{ij}=&#92;sqrt{y_{ij}/&#92;sum_{j=1}^p y_{ij}} " title="y&#039;_{ij}=&#92;sqrt{y_{ij}/&#92;sum_{j=1}^p y_{ij}} " class="latex" />.</p>
+<p style="text-align: left;">Performing these transformations is relatively easy in R. However, we first need to specify a default transformation for the case that the user does not supply one. Below I have chosen the chord trasformation as the default and use a series of <em>if else</em> statements to do the transformation depending on which method was chosen.</p>
+<pre class="brush: r; title: ; notranslate" title="">
+if(length(trans)&amp;gt;1){trans=&quot;chord&quot;}
+if(trans==&quot;chord&quot;|trans==&quot;c&quot;){
+ X&amp;lt;-Y/sqrt(rowSums(Y^2,...))
+}
+else if(trans==&quot;hellinger&quot;|trans==&quot;h&quot;){
+ X&amp;lt;-sqrt(Y/rowSums(Y,...))
+}
+else{stop(&quot;trans must be 'chord' or 'hellinger'&quot;)}
+</pre>
+<p>Above we name the transformed data <img src="//s0.wp.com/latex.php?latex=%5Cmathbf%7BX%7D&#038;bg=ffffff&#038;fg=000&#038;s=0" alt="&#92;mathbf{X}" title="&#92;mathbf{X}" class="latex" /> instead of <img src="//s0.wp.com/latex.php?latex=%5Cmathbf%7BY%7D%27&#038;bg=ffffff&#038;fg=000&#038;s=0" alt="&#92;mathbf{Y}&#039;" title="&#92;mathbf{Y}&#039;" class="latex" />. Additionally, the last line makes sure that no other non-accepted transformation was supplied and gives a warning to the user if one was.</p>
+<p>Next we need to calculate our three metrics: (1) spatiotemporal variance (i.e., <img src="//s0.wp.com/latex.php?latex=%5Cmathbf%7BVar%28Y%27%29%7D&#038;bg=ffffff&#038;fg=000&#038;s=0" alt="&#92;mathbf{Var(Y&#039;)}" title="&#92;mathbf{Var(Y&#039;)}" class="latex" />, (2) temporal contributions to variance (<img src="//s0.wp.com/latex.php?latex=%5Cmathbf%7BTCV%7D&#038;bg=ffffff&#038;fg=000&#038;s=0" alt="&#92;mathbf{TCV}" title="&#92;mathbf{TCV}" class="latex" />; equvilent to <img src="//s0.wp.com/latex.php?latex=%5Cmathbf%7BLCBD%7D&#038;bg=ffffff&#038;fg=000&#038;s=0" alt="&#92;mathbf{LCBD}" title="&#92;mathbf{LCBD}" class="latex" /> defined above), and (3) spatial contributions to variance (<img src="//s0.wp.com/latex.php?latex=%5Cmathbf%7BSCV%7D&#038;bg=ffffff&#038;fg=000&#038;s=0" alt="&#92;mathbf{SCV}" title="&#92;mathbf{SCV}" class="latex" />; equvilent to <img src="//s0.wp.com/latex.php?latex=%5Cmathbf%7BSCBD%7D&#038;bg=ffffff&#038;fg=000&#038;s=0" alt="&#92;mathbf{SCBD}" title="&#92;mathbf{SCBD}" class="latex" /> defined above).</p>
+<pre class="brush: r; title: ; notranslate" title="">
+VarY&amp;lt;-sum(colSums((X-rowMeans(X,...))^2,...))/(nrow(X)-1)
+TCV&amp;lt;-matrix(rowSums(((X-rowMeans(X,...))^2)/sum(colSums((X-rowMeans(X,...))^2,...),...),...),nrow=1)
+colnames(TCV)&amp;lt;-rownames(Y)
+SCV&amp;lt;-matrix(colSums(((X-rowMeans(X,...))^2)/sum(colSums((X-rowMeans(X,...))^2,...),...),...),nrow=1)
+colnames(SCV)&amp;lt;-colnames(Y)
+</pre>
+<p>In the above, I have also added a few lines of code to copy the row names and column names from Y, if the matrix contains them. We finish the function with a few statements to print the information (if requested by the user) and return a list of the different variance components.</p>
+<pre class="brush: r; title: ; notranslate" title="">
+if(print.results==T){
+ writeLines(paste(&quot;Total Spatiotemporal Variance:&quot;,round(VarY,2)))
+ writeLines(&quot;&quot;)
+ writeLines(&quot;Temporal Contributions to Variance:&quot;)
+ print(TCV)
+ writeLines(&quot;&quot;)
+ writeLines(&quot;Spatial Contributions to Variance:&quot;)
+ print(SCV)
+ }
+ z&amp;lt;-list('VarY'=VarY,'TCV'=TCV,'SCV'=SCV)
+} #end function
+</pre>
+<p>That&#8217;s it! We now have a way to calculate spatiotemporal variance, temporal contributions to variance, and spatial contributions to variance. The entire code can be found below:</p>
+<pre class="brush: r; title: ; notranslate" title="">stvariance&lt;-function(Y,trans=c(&quot;chord&quot;,&quot;hellinger&quot;),print.results=T,...){
+  if(length(trans)&gt;1){trans=&quot;chord&quot;}
+  if(trans==&quot;chord&quot;|trans==&quot;c&quot;){
+    X&lt;-Y/sqrt(rowSums(Y^2,...))
+  }
+  else if(trans==&quot;hellinger&quot;|trans==&quot;h&quot;){
+    X&lt;-sqrt(Y/rowSums(Y,...))
+  }
+  else{stop(&quot;trans must be 'chord' or 'hellinger'&quot;)}
+  VarY&lt;-sum(colSums((X-rowMeans(X,...))^2,...))/(nrow(X)-1)
+  TCV&lt;-matrix(rowSums(((X-rowMeans(X,...))^2)/sum(colSums((X-rowMeans(X,...))^2,...),...),...),nrow=1)
+  colnames(TCV)&lt;-rownames(Y)
+  SCV&lt;-matrix(colSums(((X-rowMeans(X,...))^2)/sum(colSums((X-rowMeans(X,...))^2,...),...),...),nrow=1)
+  colnames(SCV)&lt;-colnames(Y)
+  if(print.results==T){
+    writeLines(paste(&quot;Total Spatiotemporal Variance:&quot;,round(VarY,2)))
+    writeLines(&quot;&quot;)
+    writeLines(&quot;Temporal Contributions to Variance:&quot;)
+    print(TCV)
+    writeLines(&quot;&quot;)
+    writeLines(&quot;Spatial Contributions to Variance:&quot;)
+    print(SCV)
+  }
+  z&lt;-list('VarY'=VarY,'TCV'=TCV,'SCV'=SCV)
+}</pre>
+<div class="wp-git-embed" style="margin-bottom:10px; border:1px solid #CCC; text-align:right; width:99%; margin-top:-13px; font-size:11px; font-style:italic;"><span style="display:inline-block; padding:4px;">stvariance.R</span><a style="display:inline-block; padding:4px 6px;" href="https://raw.github.com/quanteco/quanteco/master/R/stvariance.R#L22" target="_blank">view raw</a><a style="display:inline-block; padding:4px 6px; float:left;" href="https://github.com/quanteco/quanteco/blob/master/R/stvariance.R#L22" target="_blank">view file on <strong>GitHub</strong></a></div>
+<h3>Testing for Significance in Temporal and Spatial Contributions in R</h3>
+<p>The neat thing about all this is that we can test whether a site or time has a significant contribution to overall spatiotemporal variance. Now that we have written a function to calculate site and time contributions, all we need is a function that randomizes or permutes the counts in a row or column, depending on which type of contribution you are interested in.</p>
+<p>As always, our first step is to define the arguments to the function. Theses are essentially the same as the ones described above, but with the addition of the number of randomizations (N) and which contribution (temporal or spatial) to test for:</p>
+<ul>
+<li><strong>Y</strong> a time by site matrix of abudances</li>
+<li><strong>trans</strong> a string determining the transformation used on Y; implemented options will include: &#8216;chord&#8217; (default) and &#8216;hellinger&#8217;</li>
+<li><strong>stat</strong> a string determining whether to test for temporal (TCV; default) or spatial contributions (SCV) to variance</li>
+<li><b>N</b> the number of randomizations to perform</li>
+<li><b>&#8230;</b></li>
+</ul>
+<p>We also include the ellipses so that we can pass other arguments to the summing and averaging functions.</p>
+<pre class="brush: r; title: ; notranslate" title="">
+stcontrib.test&amp;lt;-function(Y,trans=c(&quot;chord&quot;,&quot;hellinger&quot;),stat=c('TCV','SCV'),N=999,...){ require(combinat) if(length(trans)&amp;gt;1) trans=&quot;chord&quot;
+if(length(stat)&amp;gt;1) stat='TCV'
+</pre>
+<p>Now we need to calculate the observed statistic and find <img src="//s0.wp.com/latex.php?latex=n&#038;bg=ffffff&#038;fg=000&#038;s=0" alt="n" title="n" class="latex" /> and <img src="//s0.wp.com/latex.php?latex=p&#038;bg=ffffff&#038;fg=000&#038;s=0" alt="p" title="p" class="latex" />.</p>
+<pre class="brush: r; title: ; notranslate" title="">
+obs&amp;lt;-stvariance(Y,trans,print.results=F,...)
+n&amp;lt;-dim(Y)[1]
+p&amp;lt;-dim(Y)[2]
+</pre>
+<p>Now this next part is fairly complicated, and I am not sure it is worth breaking down. In short, the remaining part of the function does either a permutation or randomization test for the selected statistic. A permutation test is done when the number of permutations possible is less than the <img src="//s0.wp.com/latex.php?latex=N&#038;bg=ffffff&#038;fg=000&#038;s=0" alt="N" title="N" class="latex" /> supplied, otherwise a randomization test is performed. This is performed using a series of apply, lapply, and replicate functions.</p>
+<p>Below is the full function from my quanteco github repository.</p>
+<pre class="brush: r; title: ; notranslate" title="">stcontrib.test&lt;-function(Y,trans=c(&quot;chord&quot;,&quot;hellinger&quot;),stat=c('TCV','SCV'),N=999,...){
+  require(combinat)
+  if(length(trans)&gt;1) trans=&quot;chord&quot; 
+  if(length(stat)&gt;1) stat='TCV'
+  obs&lt;-stvariance(Y,trans,print.results=F,...)
+  n&lt;-dim(Y)[1]
+  p&lt;-dim(Y)[2]
+  if(stat=='TCV'){
+    if(N&gt;gamma(n+1)){
+      writeLines(paste(gamma(n+1),&quot;permutations were used due to small sample size&quot;))
+      tmp&lt;-matrix((rowSums(apply(pbapply(array(unlist(lapply(apply(Y,2,function(x)permn(x)),function(x)array(unlist(x),dim=c(n,gamma(n+1))))),dim=c(n,gamma(n+1),p)),2,function(x)stvariance(x,trans=trans,print.results=F,...)$TCV),2,function(x)x&gt;=obs$TCV))+1)/(gamma(n+1)+1),nrow=1)
+    }
+    else{
+      tmp&lt;-matrix((rowSums(apply(apply(replicate(N,apply(Y,2,sample)),3,function(x) stvariance(x,trans=trans,print.results=F,...)$TCV),2,function(x) x&gt;=obs$TCV))+1)/(N+1),nrow=1)
+    }
+    colnames(tmp)&lt;-rownames(Y)
+  }
+  else if(stat=='SCV'){
+    if(N&gt;gamma(p+1)){
+      writeLines(paste(gamma(p+1),&quot;permutations were used due to small sample size&quot;))
+      tmp&lt;-matrix((rowSums(apply( pbapply(array(unlist(lapply(apply(Y,1,permn),function(x)array(unlist(x),dim=c(p,gamma(p+1))))),dim=c(p,gamma(p+1),n)),2,function(x)stvariance(t(x),trans=trans,print.results=F,...)$SCV),2,function(x)x&gt;obs$SCV))+1)/(gamma(p+1)+1),nrow=1)
+    }
+    else{
+      tmp&lt;-matrix((rowSums(apply(apply(replicate(N,t(apply(Y,1,
+                                                           sample))),3,function(x) stvariance(x,trans=trans,print.results=F,...)$SCV),2,
+                                 function(x) x&gt;=obs$SCV))+1)/(N+1),nrow=1)
+    }
+    colnames(tmp)&lt;-colnames(Y)
+  }
+  else{stop(&quot;stat must be 'TCV' or 'SCV'&quot;)}
+  return(tmp)
+}</pre>
+<div class="wp-git-embed" style="margin-bottom:10px; border:1px solid #CCC; text-align:right; width:99%; margin-top:-13px; font-size:11px; font-style:italic;"><span style="display:inline-block; padding:4px;">stcontrib.R</span><a style="display:inline-block; padding:4px 6px;" href="https://raw.github.com/quanteco/quanteco/master/R/stcontrib.R#L24" target="_blank">view raw</a><a style="display:inline-block; padding:4px 6px; float:left;" href="https://github.com/quanteco/quanteco/blob/master/R/stcontrib.R#L24" target="_blank">view file on <strong>GitHub</strong></a></div>
+<h2>Example Application</h2>
+<p>As with most of the functions developed on this blog, you can load them directly into R from my github repository using the following commands:</p>
+<pre class="brush: r; title: ; notranslate" title="">
+install.packages(&quot;devtools&quot;)
+library(devtools)
+install_github(&quot;quanteco/quanteco&quot;)
+library(quanteco)
+</pre>
+<p>Below is some data on fish counts of the Roanoke logperch at five sites in the Smith River in Virginia from 2006 to 2012 and in 2014.</p>
+<pre class="brush: r; title: ; notranslate" title="">
+Y&amp;lt;-array(c(0,2,1,5,0,0,0,3,
+1,2,4,2,0,0,2,2,0,2,2,0,0,2,
+3,1,5,8,4,2,1,2,2,2,4,3,1,2,
+4,4,3,2),dim=c(8,5))
+rownames(Y)&amp;lt;-c(2006:2012,2014)
+colnames(Y)&amp;lt;-1:5
+</pre>
+<p>The data is formatted as a year <img src="//s0.wp.com/latex.php?latex=%5Ctimes&#038;bg=ffffff&#038;fg=000&#038;s=0" alt="&#92;times" title="&#92;times" class="latex" /> site matrix. First, we might want to plot this data to see any patterns. Below I do this using the ggplot2 package.</p>
+<pre class="brush: r; title: ; notranslate" title="">
+ggplot(data.frame(y=as.vector(t(Y)),year=as.numeric(rep(rownames(Y),each=ncol(Y))),site=rep(colnames(Y),nrow(Y))))+
+  geom_line(aes(y=y,x=year,color=site))+theme_classic(base_family=&quot;serif&quot;)+
+  scale_color_discrete(name=&quot;Site&quot;)+theme(legend.position=&quot;bottom&quot;)+xlab(&quot;Year&quot;)+ylab(&quot;Count&quot;)
+</pre>
+<p><a href="http://i1.wp.com/www.gregbanderson.com/wp-content/uploads/2015/01/rexcounts.png" data-rel="lightbox"><img class="aligncenter wp-image-283 size-full" src="http://i1.wp.com/www.gregbanderson.com/wp-content/uploads/2015/01/rexcounts.png?resize=750%2C450" alt="rexcounts" srcset="http://i0.wp.com/gregorybanderson.elementfx.com/wp-content/uploads/2015/01/rexcounts.png?resize=300%2C180 300w, http://i0.wp.com/gregorybanderson.elementfx.com/wp-content/uploads/2015/01/rexcounts.png?w=750 750w" sizes="(max-width: 750px) 100vw, 750px" data-recalc-dims="1" /></a></p>
+<p>Now let&#8217;s try our stvariance function.</p>
+<pre class="brush: r; title: ; notranslate" title="">
+stvariance(Y)
+</pre>
+<p>This gives us the following output:</p>
+<pre>Total Spatiotemporal Variance: 0.42
+
+Temporal Contributions to Variance:
+          2006     2007       2008      2009      2010      2011       2012       2014
+[1,] 0.1790136 0.109361 0.08274025 0.1182281 0.2412376 0.1594848 0.07886613 0.03106847
+
+Spatial Contributions to Variance:
+             1          2         3         4         5
+[1,] 0.2551388 0.09596705 0.1376324 0.1839805 0.3272813
+</pre>
+<p>Now we can see if any of these contributions are greater than what we would expect by chance.</p>
+<pre class="brush: r; title: ; notranslate" title="">
+stcontrib.test(Y,stat=&quot;TCV&quot;) #Test for significant temporal contributions
+</pre>
+<p>Which gives us p-values for each year:</p>
+<pre>      2006  2007 2008  2009  2010 2011  2012  2014
+[1,] 0.163 0.561 0.79 0.526 0.025 0.29 0.833 0.972
+</pre>
+<p>We can also test for spatial contributions:</p>
+<pre class="brush: r; title: ; notranslate" title="">
+stcontrib.test(Y,stat=&quot;SCV&quot;) #Test for significant spatial contributions
+</pre>
+<p>giving us:</p>
+<pre>120 permutations were used due to small sample size
+  |++++++++++++++++++++++++++++++++++++++++++++++++++| 100%
+             1         2         3         4           5
+[1,] 0.2066116 0.8016529 0.6033058 0.4049587 0.008264463
+</pre>
+<p>Finally, we might want to plot these contributions. This can easily be done in a bar graph using ggplot2 and the gridExtra package:</p>
+<pre class="brush: r; title: ; notranslate" title="">
+library(gridExtra)
+plot1&amp;lt;-ggplot(data.frame(year=rownames(Y),contrib=as.vector(tmp$TCV)),aes(x=year,y=contrib))+
+  geom_bar(stat=&quot;identity&quot;)+theme_classic(base_family=&quot;serif&quot;)+xlab(&quot;Sampling Year&quot;)+
+  ylab(&quot;Contribution to Variance&quot;)+
+  annotate(&quot;text&quot;,x=which(tmp.test&amp;lt;0.05),y=tmp$TCV[which(tmp.test&amp;lt;0.05)]+0.01,label=&quot;*&quot;,size=10)+
+  scale_y_continuous(limits = c(0, round(max(c(tmp$SCV,tmp$TCV))+0.05,1)))
+tmp.test&amp;lt;-stcontrib.test(Y,stat=&quot;SCV&quot;)
+plot2&amp;lt;-ggplot(data.frame(site=colnames(Y),contrib=as.vector(tmp$SCV)),aes(x=site,y=contrib))+
+  geom_bar(stat=&quot;identity&quot;)+theme_classic(base_family=&quot;serif&quot;)+xlab(&quot;Sampling Site&quot;)+
+  ylab(&quot;Contribution to Variance&quot;)+
+  annotate(&quot;text&quot;,x=which(tmp.test&amp;lt;0.05),y=tmp$SCV[which(tmp.test&amp;lt;0.05)]+0.01,label=&quot;*&quot;,size=10)+
+  scale_y_continuous(limits = c(0, round(max(c(tmp$SCV,tmp$TCV))+0.05,1)))
+grid.arrange(plot1,plot2,nrow=2)
+</pre>
+<p>The plot can be seen at the top of the page in the featured image.</p>
+<h2>References</h2>
+<p>Legendre, P. and M. De Cáceres. 2013. Beta diversity as the variance of community data: dissimilarity coefficients and partitioning. <a href="http://onlinelibrary.wiley.com/doi/10.1111/ele.12141/full" target="_blank">Ecology Letters <strong>16</strong>(8): 951-963</a>.</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p><div class="sharedaddy sd-sharing-enabled"><div class="robots-nocontent sd-block sd-social sd-social-icon sd-sharing"><h3 class="sd-title">Share this:</h3><div class="sd-content"><ul><li class="share-twitter"><a rel="nofollow" data-shared="sharing-twitter-78" class="share-twitter sd-button share-icon no-text" href="http://quanteco.github.io./2016/01/05/testing-site-and-time-contributions-to-variance-in-spatiotemporal-counts/?share=twitter" target="_blank" title="Click to share on Twitter"><span></span><span class="sharing-screen-reader-text">Click to share on Twitter (Opens in new window)</span></a></li><li class="share-facebook"><a rel="nofollow" data-shared="sharing-facebook-78" class="share-facebook sd-button share-icon no-text" href="http://quanteco.github.io./2016/01/05/testing-site-and-time-contributions-to-variance-in-spatiotemporal-counts/?share=facebook" target="_blank" title="Share on Facebook"><span></span><span class="sharing-screen-reader-text">Share on Facebook (Opens in new window)</span></a></li><li class="share-google-plus-1"><a rel="nofollow" data-shared="sharing-google-78" class="share-google-plus-1 sd-button share-icon no-text" href="http://quanteco.github.io./2016/01/05/testing-site-and-time-contributions-to-variance-in-spatiotemporal-counts/?share=google-plus-1" target="_blank" title="Click to share on Google+"><span></span><span class="sharing-screen-reader-text">Click to share on Google+ (Opens in new window)</span></a></li><li class="share-end"></li></ul></div></div></div>
+<div id='jp-relatedposts' class='jp-relatedposts' >
+	<h3 class="jp-relatedposts-headline"><em>Related</em></h3>
+</div>    </div>
+    <footer class="single-footer">
+                                  </footer>
+      <section id="comments">
+    <h3>One Response </h3>
+
+    <ol class="media-list">
+      
+  <li id="comment-2" class="comment even thread-even depth-1 media comment-2">
+    <img alt='' src='http://0.gravatar.com/avatar/05f69f43956b4477c80cf85f2c0b25c8?s=56&#038;d=mm&#038;r=g' srcset='http://0.gravatar.com/avatar/05f69f43956b4477c80cf85f2c0b25c8?s=112&amp;d=mm&amp;r=g 2x' class='avatar pull-left media-object avatar-56 photo' height='56' width='56' />    <div class="media-body">
+      <div class="comment-header clearfix">
+        <h5 class="media-heading"><a href='http://irnr.tamu.edu' rel='external nofollow' class='url'>Brian L. Pierce</a></h5>
+        <div class="comment-meta">
+        <time datetime="2015-08-01T12:41:15+00:00"><a href="http://quanteco.github.io./2016/01/05/testing-site-and-time-contributions-to-variance-in-spatiotemporal-counts/#comment-2">
+          August 1, 2015</a>
+        </time>
+        |
+        <a rel='nofollow' class='comment-reply-link' href='http://quanteco.github.io./2016/01/05/testing-site-and-time-contributions-to-variance-in-spatiotemporal-counts/?replytocom=2#respond' onclick='return addComment.moveForm( "comment-2", "2", "respond", "78" )' aria-label='Reply to Brian L. Pierce'>Reply</a>        
+                </div>
+      </div>
+
+      
+      <p>Elegant practical application.  Nice.</p>
+      
+  </div></li>
+    </ol>
+
+    
+      </section><!-- /#comments -->
+  
+
+  <section id="respond">
+  				<div id="respond" class="comment-respond">
+			<h3 id="reply-title" class="comment-reply-title">Leave a Reply <small><a rel="nofollow" id="cancel-comment-reply-link" href="/2016/01/05/testing-site-and-time-contributions-to-variance-in-spatiotemporal-counts/#respond" style="display:none;">Cancel reply</a></small></h3>				<form action="http://quanteco.github.io./wp-comments-post.php" method="post" id="commentform" class="comment-form" novalidate>
+					<p class="comment-form-comment"><label for="comment">Comment</label> <textarea id="comment" name="comment" cols="45" rows="8" class="input-xlarge" aria-required="true" required="required"></textarea></p><div class="row"><div class="col-md-4"><label for="author">Name <span class="comment-required">*</span></label> <input id="author" name="author" type="text" value="" aria-required="true" /></div>
+<div class="col-md-4"><label for="email">Email (will not be published) <span class="comment-required">*</span></label> <input type="email" class="text" name="email" id="email" value="" aria-required="true" /></div>
+<div class="col-md-4"><label for="url">Website</label> <input id="url" name="url" type="url" value="" /></div>
+</div><p class="form-submit"><input name="submit" type="submit" id="submit" class="kad-btn kad-btn-primary" value="Submit Comment" /> <input type='hidden' name='comment_post_ID' value='78' id='comment_post_ID' />
+<input type='hidden' name='comment_parent' id='comment_parent' value='0' />
+</p><p style="display: none;"><input type="hidden" id="akismet_comment_nonce" name="akismet_comment_nonce" value="c349d2d417" /></p><p class="comment-subscription-form"><input type="checkbox" name="subscribe_comments" id="subscribe_comments" value="subscribe" style="width: auto; -moz-appearance: checkbox; -webkit-appearance: checkbox;" /> <label class="subscribe-label" id="subscribe-label" for="subscribe_comments">Notify me of follow-up comments by email.</label></p><p class="comment-subscription-form"><input type="checkbox" name="subscribe_blog" id="subscribe_blog" value="subscribe" style="width: auto; -moz-appearance: checkbox; -webkit-appearance: checkbox;" /> <label class="subscribe-label" id="subscribe-blog-label" for="subscribe_blog">Notify me of new posts by email.</label></p><p style="display: none;"><input type="hidden" id="ak_js" name="ak_js" value="58"/></p>				</form>
+					</div><!-- #respond -->
+		
+  </section><!-- /#respond -->
+  </article>
+</div>
+
+            
+                      <aside class="col-lg-3 col-md-4 kad-sidebar" role="complementary">
+              <div class="sidebar">
+                     <section id="virtue_about_with_image-3" class="widget-1 widget-first widget virtue_about_with_image"><div class="widget-inner">    <div class="kad_img_upload_widget">
+        <a href="http://quanteco.github.io./wp-content/uploads/2015/01/gregwinter2.jpg" rel="lightbox">        <img src="http://quanteco.github.io./wp-content/uploads/2015/01/gregwinter2.jpg" />
+        </a>            </div>
+
+    </div></section>    <section id="text-3" class="widget-2 widget widget_text"><div class="widget-inner"><h3>Gregory B. Anderson</h3>			<div class="textwidget">Dept. of Fish and Wildlife Conservation
+Virginia Polytechnic Institute and State University
+Blacksburg, VA 24061</div>
+		</div></section><section id="nav_menu-3" class="widget-3 widget widget_nav_menu"><div class="widget-inner"><h3>Site Links</h3><ul id="menu-site-links-1" class="menu"><li  class="menu-home menu-item-297"><a href="http://quanteco.github.io./">Home</a></li>
+<li  class="menu-research menu-item-296"><a href="http://quanteco.github.io./research/">Research</a></li>
+<li  class="menu-eportfolio menu-item-295"><a href="http://quanteco.github.io./eportfolio/">ePortfolio</a></li>
+<li  class="menu-blog-on-quantitative-ecology current_page_parent menu-item-323"><a href="http://quanteco.github.io./blog-on-quantitative-ecology/">Blog on Quantitative Ecology</a></li>
+<li  class="menu-curriculum-vitae menu-item-325"><a href="http://quanteco.github.io./curriculum-vitae/">Curriculum Vitae</a></li>
+<li  class="menu-contact menu-item-324"><a href="http://quanteco.github.io./contact/">Contact</a></li>
+</ul></div></section>    <section id="kadence_recent_posts-3" class="widget-4 widget kadence_recent_posts"><div class="widget-inner">    <h3>Recent Posts</h3>    <ul>
+        <li class="clearfix postclass">
+        <a href="http://quanteco.github.io./2016/01/05/testing-site-and-time-contributions-to-variance-in-spatiotemporal-counts/" title="Testing Site and Time Contributions to Variance in Spatiotemporal Counts" class="recentpost_featimg">
+          <img width="80" height="50" src="http://i1.wp.com/gregorybanderson.elementfx.com/wp-content/uploads/2015/01/propvar.png?resize=80%2C50" class="attachment-widget-thumb size-widget-thumb wp-post-image" alt="propvar" /></a>
+        <a href="http://quanteco.github.io./2016/01/05/testing-site-and-time-contributions-to-variance-in-spatiotemporal-counts/" title="Testing Site and Time Contributions to Variance in Spatiotemporal Counts" class="recentpost_title">Testing Site and Time Contributions to Variance in Spatiotemporal Counts</a>
+        <span class="recentpost_date">January 5, 2016</span>
+        </li>
+        <li class="clearfix postclass">
+        <a href="http://quanteco.github.io./2016/01/04/morans-eigenvector-maps/" title="Moran&#8217;s Eigenvector Maps" class="recentpost_featimg">
+          <img width="80" height="50" src="http://i1.wp.com/gregorybanderson.elementfx.com/wp-content/uploads/2015/01/autopatterns.png?resize=80%2C50" class="attachment-widget-thumb size-widget-thumb wp-post-image" alt="autopatterns" /></a>
+        <a href="http://quanteco.github.io./2016/01/04/morans-eigenvector-maps/" title="Moran&#8217;s Eigenvector Maps" class="recentpost_title">Moran&#8217;s Eigenvector Maps</a>
+        <span class="recentpost_date">January 4, 2016</span>
+        </li>
+        <li class="clearfix postclass">
+        <a href="http://quanteco.github.io./2015/12/29/morans-i-calculation-and-testing/" title="Moran&#8217;s I (Calculation and Testing)" class="recentpost_featimg">
+          <img width="80" height="50" src="http://i0.wp.com/gregorybanderson.elementfx.com/wp-content/uploads/2015/01/moransi.png?resize=80%2C50" class="attachment-widget-thumb size-widget-thumb wp-post-image" alt="moransi" /></a>
+        <a href="http://quanteco.github.io./2015/12/29/morans-i-calculation-and-testing/" title="Moran&#8217;s I (Calculation and Testing)" class="recentpost_title">Moran&#8217;s I (Calculation and Testing)</a>
+        <span class="recentpost_date">December 29, 2015</span>
+        </li>
+        <li class="clearfix postclass">
+        <a href="http://quanteco.github.io./2015/12/15/developing-distance-based-neighborhood-matrices/" title="Developing Distance Based Neighborhood Matrices" class="recentpost_featimg">
+          <img width="80" height="50" src="http://i1.wp.com/gregorybanderson.elementfx.com/wp-content/uploads/2015/01/neighborhood.png?resize=80%2C50" class="attachment-widget-thumb size-widget-thumb wp-post-image" alt="neighborhood" /></a>
+        <a href="http://quanteco.github.io./2015/12/15/developing-distance-based-neighborhood-matrices/" title="Developing Distance Based Neighborhood Matrices" class="recentpost_title">Developing Distance Based Neighborhood Matrices</a>
+        <span class="recentpost_date">December 15, 2015</span>
+        </li>
+        <li class="clearfix postclass">
+        <a href="http://quanteco.github.io./2015/12/01/pastehelloworld/" title="paste(&#8220;Hello&#8221;,&#8221;World&#8221;)" class="recentpost_featimg">
+          <img width="80" height="50" src="http://i2.wp.com/gregorybanderson.elementfx.com/wp-content/uploads/2015/01/helloworld.png?resize=80%2C50" class="attachment-widget-thumb size-widget-thumb wp-post-image" alt="helloworld" /></a>
+        <a href="http://quanteco.github.io./2015/12/01/pastehelloworld/" title="paste(&#8220;Hello&#8221;,&#8221;World&#8221;)" class="recentpost_title">paste(&#8220;Hello&#8221;,&#8221;World&#8221;)</a>
+        <span class="recentpost_date">December 1, 2015</span>
+        </li>
+        </ul>
+    </div></section><section id="nav_menu-4" class="widget-5 widget widget_nav_menu"><div class="widget-inner"><h3>Recent Papers</h3><ul id="menu-recent-papers" class="menu"><li  class="menu-multi-scale-occupancy-models-to-infer-host-and-site-occupancy menu-item-344"><a href="http://www.sciencedirect.com/science/article/pii/S0380133015000039">Multi-scale Occupancy Models to Infer Host and Site Occupancy</a></li>
+<li  class="menu-round-gobies-and-the-ecology-of-vhsv-genotype-ivb menu-item-306"><a target="_blank" href="http://www.sciencedirect.com/science/article/pii/S0380133014001853">Round Gobies and the Ecology of VHSV Genotype IVb</a></li>
+<li  class="menu-dealing-with-uncertainty-in-fish-passage menu-item-298"><a target="_blank" href="http://link.springer.com/article/10.1007%2Fs00267-012-9886-6">Dealing with Uncertainty in Fish Passage</a></li>
+<li  class="menu-cyprinid-herpesvirus-3-in-the-great-lakes menu-item-299"><a target="_blank" href="http://www.jwildlifedis.org/doi/abs/10.7589/2012-02-062">Cyprinid Herpesvirus-3 in the Great Lakes</a></li>
+<li  class="menu-occupancy-estimation-of-holiday-darter menu-item-300"><a target="_blank" href="http://www.tandfonline.com/doi/abs/10.1080/00028487.2011.644193">Occupancy Estimation of Holiday Darter</a></li>
+</ul></div></section><section id="nav_menu-5" class="widget-6 widget widget_nav_menu"><div class="widget-inner"><h3>ePortfolio</h3><ul id="menu-eportfolio" class="menu"><li  class="menu-cirrus-clouds-and-classification menu-item-301"><a href="index.php?page_id=13/#cirrus">Cirrus Clouds and Classification</a></li>
+<li  class="menu-autocorrelation-in-baci-designs menu-item-302"><a href="index.php?page_id=13/#baci">Autocorrelation in BACI Designs</a></li>
+<li  class="menu-fluvial-geostatistical-sdm menu-item-303"><a href="index.php?page_id=13/#geostat">Fluvial Geostatistical SDM</a></li>
+<li  class="menu-flow-path-direction-models menu-item-304"><a href="index.php?page_id=13/#dflow">Flow Path Direction Models</a></li>
+<li  class="menu-multi-species-sdm menu-item-305"><a href="index.php?page_id=13/#community">Multi-species SDM</a></li>
+</ul></div></section><section id="categories-4" class="widget-7 widget widget_categories"><div class="widget-inner"><h3>Categories</h3>		<ul>
+	<li class="cat-item cat-item-2"><a href="http://quanteco.github.io./category/hello/" >Hello</a>
+</li>
+	<li class="cat-item cat-item-3"><a href="http://quanteco.github.io./category/r/" >R</a>
+</li>
+		</ul>
+</div></section><section id="widget_profile-3" class="widget-8 widget-last widget widget_widget_profile"><div class="widget-inner"><h3>Github</h3><div class="wpgithub-profile"><div class="wpgithub-user"><a href="https://github.com/quanteco" title="View quanteco's Github"><img src="http://gravatar.com/avatar/?s=56" alt="View quanteco's Github" /></a><h3 class="wpgithub-username"><a href="https://github.com/quanteco" title="View quanteco's Github">quanteco</a></h3><p class="wpgithub-name">Gregory Anderson</p><p class="wpgithub-location">Blacksburg, VA</p></div><a class="wpgithub-bblock" href="https://github.com/quanteco?tab=repositories"><span class="wpgithub-count">4</span><span class="wpgithub-text">Public Repos</span></a><a class="wpgithub-bblock" href="https://gist.github.com/quanteco"><span class="wpgithub-count">0</span><span class="wpgithub-text">Public Gists</span></a><a class="wpgithub-bblock" href="https://github.com/quanteco/followers"><span class="wpgithub-count">0</span><span class="wpgithub-text">Followers</span></a></div></div></section>              </div><!-- /.sidebar -->
+            </aside><!-- /aside -->
+                    </div><!-- /.row-->
+        </div><!-- /.content -->
+      </div><!-- /.wrap -->
+      <footer id="containerfooter" class="footerclass" role="contentinfo">
+  <div class="container">
+  	<div class="row">
+  								        			        </div>
+        <div class="footercredits clearfix">
+    		
+    		        	<p>&copy; 2016 Gregory B. Anderson. All Rights Reserved.</p>
+    	</div>
+
+  </div>
+
+</footer>
+
+	<div style="display:none">
+	<div class="grofile-hash-map-2729ebfe90936ed4c8a770eabc2993f7">
+	</div>
+	</div>
+
+	<script type="text/javascript">
+		window.WPCOM_sharing_counts = {"http:\/\/gregorybanderson.elementfx.com\/2016\/01\/05\/testing-site-and-time-contributions-to-variance-in-spatiotemporal-counts\/":78};
+	</script>
+		<script type="text/javascript">
+			var windowOpen;
+		jQuery(document).on( 'ready post-load', function(){
+			jQuery( 'a.share-twitter' ).on( 'click', function() {
+				if ( 'undefined' !== typeof windowOpen ){ // If there's another sharing window open, close it.
+					windowOpen.close();
+				}
+				windowOpen = window.open( jQuery(this).attr( 'href' ), 'wpcomtwitter', 'menubar=1,resizable=1,width=600,height=350' );
+				return false;
+			});
+		});
+		</script>
+				<script type="text/javascript">
+			var windowOpen;
+		jQuery(document).on( 'ready post-load', function(){
+			jQuery( 'a.share-facebook' ).on( 'click', function() {
+				if ( 'undefined' !== typeof windowOpen ){ // If there's another sharing window open, close it.
+					windowOpen.close();
+				}
+				windowOpen = window.open( jQuery(this).attr( 'href' ), 'wpcomfacebook', 'menubar=1,resizable=1,width=600,height=400' );
+				return false;
+			});
+		});
+		</script>
+				<script type="text/javascript">
+			var windowOpen;
+		jQuery(document).on( 'ready post-load', function(){
+			jQuery( 'a.share-google-plus-1' ).on( 'click', function() {
+				if ( 'undefined' !== typeof windowOpen ){ // If there's another sharing window open, close it.
+					windowOpen.close();
+				}
+				windowOpen = window.open( jQuery(this).attr( 'href' ), 'wpcomgoogle-plus-1', 'menubar=1,resizable=1,width=480,height=550' );
+				return false;
+			});
+		});
+		</script>
+		<script type='text/javascript' src='http://quanteco.github.io./wp-content/plugins/akismet/_inc/form.js?ver=3.1.7'></script>
+<script type='text/javascript' src='http://quanteco.github.io./wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/scripts/shCore.js?ver=3.0.9b'></script>
+<script type='text/javascript' src='http://quanteco.github.io./wp-content/plugins/syntaxhighlighter/third-party-brushes/shBrushR.js?ver=20100919'></script>
+<script type='text/javascript'>
+	(function(){
+		var corecss = document.createElement('link');
+		var themecss = document.createElement('link');
+		var corecssurl = "http://quanteco.github.io./wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/styles/shCore.css?ver=3.0.9b";
+		if ( corecss.setAttribute ) {
+				corecss.setAttribute( "rel", "stylesheet" );
+				corecss.setAttribute( "type", "text/css" );
+				corecss.setAttribute( "href", corecssurl );
+		} else {
+				corecss.rel = "stylesheet";
+				corecss.href = corecssurl;
+		}
+		document.getElementsByTagName("head")[0].insertBefore( corecss, document.getElementById("syntaxhighlighteranchor") );
+		var themecssurl = "http://quanteco.github.io./wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/styles/shThemeDefault.css?ver=3.0.9b";
+		if ( themecss.setAttribute ) {
+				themecss.setAttribute( "rel", "stylesheet" );
+				themecss.setAttribute( "type", "text/css" );
+				themecss.setAttribute( "href", themecssurl );
+		} else {
+				themecss.rel = "stylesheet";
+				themecss.href = themecssurl;
+		}
+		//document.getElementById("syntaxhighlighteranchor").appendChild(themecss);
+		document.getElementsByTagName("head")[0].insertBefore( themecss, document.getElementById("syntaxhighlighteranchor") );
+	})();
+	SyntaxHighlighter.config.strings.expandSource = '+ expand source';
+	SyntaxHighlighter.config.strings.help = '?';
+	SyntaxHighlighter.config.strings.alert = 'SyntaxHighlighter\n\n';
+	SyntaxHighlighter.config.strings.noBrush = 'Can\'t find brush for: ';
+	SyntaxHighlighter.config.strings.brushNotHtmlScript = 'Brush wasn\'t configured for html-script option: ';
+	SyntaxHighlighter.defaults['pad-line-numbers'] = false;
+	SyntaxHighlighter.defaults['toolbar'] = false;
+	SyntaxHighlighter.all();
+</script>
+<script type='text/javascript' src='http://quanteco.github.io./wp-content/plugins/resume-builder/js/jquery.raty.js?ver=1.0'></script>
+<script type='text/javascript' src='http://quanteco.github.io./wp-content/plugins/resume-builder/js/functions.js?ver=1.0'></script>
+<script type='text/javascript' src='http://quanteco.github.io./wp-content/plugins/jetpack/modules/photon/photon.js?ver=20130122'></script>
+<script type='text/javascript' src='http://s0.wp.com/wp-content/js/devicepx-jetpack.js?ver=201613'></script>
+<script type='text/javascript' src='http://s.gravatar.com/js/gprofiles.js?ver=2016Apraa'></script>
+<script type='text/javascript'>
+/* <![CDATA[ */
+var WPGroHo = {"my_hash":""};
+/* ]]> */
+</script>
+<script type='text/javascript' src='http://quanteco.github.io./wp-content/plugins/jetpack/modules/wpgroho.js?ver=4.4.2'></script>
+<script type='text/javascript' src='http://quanteco.github.io./wp-includes/js/comment-reply.min.js?ver=4.4.2'></script>
+<script type='text/javascript' src='http://quanteco.github.io./wp-includes/js/masonry.min.js?ver=3.1.2'></script>
+<script type='text/javascript' src='http://quanteco.github.io./wp-content/themes/virtue/assets/js/min/plugins-min.js?ver=262'></script>
+<script type='text/javascript' src='http://quanteco.github.io./wp-content/themes/virtue/assets/js/main.js?ver=262'></script>
+<script type='text/javascript' src='http://quanteco.github.io./wp-includes/js/wp-embed.min.js?ver=4.4.2'></script>
+<script type='text/javascript'>
+/* <![CDATA[ */
+var sharing_js_options = {"lang":"en","counts":"1"};
+/* ]]> */
+</script>
+<script type='text/javascript' src='http://quanteco.github.io./wp-content/plugins/jetpack/modules/sharedaddy/sharing.js?ver=3.8.2'></script>
+<script type='text/javascript' src='http://stats.wp.com/e-201613.js' async defer></script>
+<script type='text/javascript'>
+	_stq = window._stq || [];
+	_stq.push([ 'view', {v:'ext',j:'1:3.8.2',blog:'104885985',post:'78',tz:'0',srv:'gregorybanderson.elementfx.com'} ]);
+	_stq.push([ 'clickTrackerInit', '104885985', '78' ]);
+</script>
+    </div><!--Wrapper-->
+  </body>
+</html>
